@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>today · a daily focus HUD for Claude, Cursor and Kiro</title>
+<meta name="description" content="today is a portable Agent Skill that ranks your Teams, Outlook, GitHub and Jira work into one focus list and keeps a local HUD updated all day.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;600&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/glass.css">
+<style>
+  :root { --bg: #050b14; --panel: #0b1a2b; --accent: #19d3f0; --accent-2: #ffb020; --glow: #5ef1ff; --red: #ff4d4d; --text: #dcebf5; --muted: #8fb0c6; }
+  body { background: var(--bg); color: var(--text); font: 16px/1.6 Inter, system-ui, sans-serif; }
+  .field { position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background: radial-gradient(1100px 700px at 50% 20%, rgba(25, 211, 240, .18), transparent 65%), radial-gradient(700px 500px at 90% 90%, rgba(255, 176, 32, .08), transparent 60%); }
+  .scan { position: fixed; inset: 0; z-index: 2; pointer-events: none; opacity: .03; background: repeating-linear-gradient(0deg, #fff 0 1px, transparent 1px 3px); }
+  main, .site-nav { position: relative; z-index: 3; }
+  .site-nav { color: var(--text); font: 600 15px Rajdhani, sans-serif; letter-spacing: .14em; text-transform: uppercase; }
+  .brand { display: flex; align-items: center; gap: 10px; color: var(--glow); }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+  h1, h2, h3 { font-family: Rajdhani, sans-serif; letter-spacing: .08em; }
+  h2 { font-size: 15px; text-transform: uppercase; letter-spacing: .28em; color: var(--accent); margin: 0 0 18px; display: flex; gap: 10px; align-items: center; }
+  section { padding: 70px 0 10px; }
+
+  /* Hero */
+  .hero { position: relative; min-height: 88vh; display: grid; place-items: center; padding: 40px 0; }
+  .rings { position: absolute; width: min(920px, 120vw); aspect-ratio: 1; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+  .rings circle, .rings path { fill: none; stroke: var(--accent); }
+  .rings .amber { stroke: var(--accent-2); }
+  .hero-core { position: relative; text-align: center; display: grid; gap: 18px; justify-items: center; }
+  .hero h1 { margin: 0; font-size: clamp(64px, 12vw, 140px); line-height: .9; color: var(--glow); text-transform: uppercase; letter-spacing: .18em; text-shadow: 0 0 30px rgba(94, 241, 255, .35); }
+  .hero .tag { font-size: clamp(18px, 2.4vw, 22px); max-width: 40ch; margin: 0; color: var(--text); }
+  .focus-preview { width: min(520px, 92vw); padding: 18px; text-align: left; }
+  .focus-preview ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .focus-preview li { display: grid; grid-template-columns: 26px 1fr auto; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 12px; background: rgba(5, 11, 20, .55); border: 1px solid rgba(94, 241, 255, .12); }
+  .focus-preview .score { font: 700 24px Rajdhani, sans-serif; color: var(--glow); }
+  .focus-preview small { display: block; color: var(--muted); font: 12px "JetBrains Mono", monospace; }
+  .focus-preview .icon { color: var(--accent); }
+  .corner { position: absolute; font: 12px/1.6 "JetBrains Mono", monospace; color: var(--muted); text-transform: uppercase; letter-spacing: .14em; }
+  .corner b { color: var(--glow); font-weight: 600; }
+  .tl { top: 30px; left: 0; } .tr { top: 30px; right: 0; text-align: right; } .bl { bottom: 30px; left: 0; } .br { bottom: 30px; right: 0; text-align: right; }
+  .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); margin-right: 6px; }
+  .dot.amber { background: var(--accent-2); box-shadow: 0 0 8px var(--accent-2); }
+  .cta { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .pill.primary { background: var(--accent); color: #031018; }
+  .pill.ghost { color: var(--glow); }
+
+  /* Commands */
+  .cmds { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+  .cmd { padding: 20px; display: grid; gap: 8px; }
+  .cmd code { font: 600 18px "JetBrains Mono", monospace; color: var(--glow); display: flex; gap: 10px; align-items: center; }
+  .cmd p { margin: 0; color: var(--muted); font-size: 15px; }
+
+  /* Ranking */
+  .rank { display: grid; grid-template-columns: minmax(260px, 380px) 1fr; gap: 28px; align-items: center; }
+  .rank svg text { fill: var(--text); font: 600 13px Rajdhani, sans-serif; letter-spacing: .1em; }
+  .rank table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  .rank td { padding: 10px 6px; border-bottom: 1px solid rgba(94, 241, 255, .12); }
+  .rank td:last-child { text-align: right; font: 600 16px "JetBrains Mono", monospace; color: var(--glow); }
+  .rank .neg td:last-child { color: var(--red); }
+  .panel { padding: 26px; }
+
+  /* Sources */
+  .sources { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  .src { padding: 20px; }
+  .src h3 { margin: 0 0 8px; display: flex; gap: 10px; align-items: center; font-size: 22px; color: var(--glow); }
+  .src p { margin: 0; color: var(--muted); font-size: 14px; }
+
+  .demo { padding: 10px; }
+  .demo iframe { width: 100%; height: 760px; border: 0; border-radius: 16px; background: var(--bg); }
+  .note { color: var(--muted); font-size: 14px; }
+  .safety { display: grid; gap: 10px; padding: 26px; }
+  .safety li { margin-left: 18px; }
+
+  @media (max-width: 820px) { .rank { grid-template-columns: 1fr; } .corner { display: none; } }
+
+  /* Boot sequence */
+  @media (prefers-reduced-motion: no-preference) {
+    .draw { stroke-dasharray: var(--len); stroke-dashoffset: var(--len); animation: draw 1.6s cubic-bezier(.6, 0, .2, 1) forwards; }
+    .d2 { animation-delay: .25s; } .d3 { animation-delay: .5s; } .d4 { animation-delay: .75s; }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+    .spin { transform-origin: 50% 50%; transform-box: view-box; animation: spin 80s linear infinite; }
+    .spin.rev { animation-direction: reverse; animation-duration: 120s; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .boot { opacity: 0; animation: boot .8s ease forwards; }
+    .b1 { animation-delay: .9s; } .b2 { animation-delay: 1.2s; } .b3 { animation-delay: 1.5s; } .b4 { animation-delay: 1.8s; }
+    @keyframes boot { from { opacity: 0; transform: translateY(8px); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+    .stale { animation: pulse 2.4s ease-in-out infinite; }
+    @keyframes pulse { 50% { box-shadow: 0 0 0 1px var(--accent-2), 0 0 18px rgba(255, 176, 32, .35); } }
+    .flicker { animation: flicker 6s steps(1) infinite; }
+    @keyframes flicker { 0%, 97%, 100% { opacity: 1; } 98% { opacity: .6; } 99% { opacity: .9; } }
+  }
+</style>
+</head>
+<body>
+<div class="field" aria-hidden="true"></div>
+<div class="dim" aria-hidden="true" style="background: rgba(0,0,0,.15)"></div>
+<div class="scan" aria-hidden="true"></div>
+
+<nav class="site-nav glass wrap" aria-label="Main">
+  <a class="brand" href="../"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-radar"/></svg>agent-skills</a>
+  <ul>
+    <li><a href="./" aria-current="page">today</a></li>
+    <li><a href="../assemble/">assemble</a></li>
+    <li><a href="https://github.com/DigiAye/agent-skills/tree/main/skills/today"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-github"/></svg>Source</a></li>
+  </ul>
+</nav>
+
+<main class="wrap">
+  <section class="hero" aria-labelledby="title">
+    <svg class="rings" viewBox="0 0 1000 1000" aria-hidden="true">
+      <g class="spin"><circle class="draw" style="--len: 2890" cx="500" cy="500" r="460" stroke-width="1" stroke-dasharray="3 12" opacity=".7"/></g>
+      <g class="spin rev"><circle class="draw d2" style="--len: 2450" cx="500" cy="500" r="390" stroke-width="2" opacity=".55"/></g>
+      <path class="draw d3 amber" style="--len: 620" d="M 500 160 A 340 340 0 0 1 840 500" stroke-width="4" opacity=".8"/>
+      <g class="spin"><circle class="draw d4" style="--len: 1760" cx="500" cy="500" r="280" stroke-width="10" stroke-dasharray="2 18" opacity=".35"/></g>
+      <circle cx="500" cy="500" r="230" stroke-width=".6" opacity=".5"/>
+    </svg>
+    <div class="corner tl boot b2"><span class="dot"></span>Sources online <b>4/4</b><br>GitHub · Jira · Outlook · Teams</div>
+    <div class="corner tr boot b2">Items ranked <b>12</b><br>Waiting on you <b>2</b></div>
+    <div class="corner bl boot b3">Mode <b>morning</b><br>Planning for <b>today</b></div>
+    <div class="corner br boot b3"><span class="dot amber"></span>Last refresh <b>08:30</b><br>Next <b>09:30</b></div>
+
+    <div class="hero-core">
+      <h1 id="title" class="flicker">today</h1>
+      <p class="tag boot b1">Your Teams, Outlook, GitHub and Jira in one ranked focus list, kept current all day.</p>
+      <div class="focus-preview glass refract boot b2" role="img" aria-label="Example focus list showing three ranked items">
+        <ol>
+          <li><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-kanban"/></svg><span>Checkout fails for saved cards on iOS<small>+40 incident · +25 due today</small></span><span class="score">80</span></li>
+          <li class="stale"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-git-pull-request"/></svg><span>Review PR #482 for Priya<small>+30 blocked on you · 2 days</small></span><span class="score">50</span></li>
+          <li><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-mail"/></svg><span>Own the incident write-up<small>+30 direct ask · +15 VIP</small></span><span class="score">50</span></li>
+        </ol>
+      </div>
+      <div class="cta boot b4">
+        <a class="pill primary" href="#install"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-terminal"/></svg>Install</a>
+        <a class="pill ghost glass" href="#demo"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-activity"/></svg>Live demo HUD</a>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="cmds">
+    <h2 id="cmds"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-gauge"/></svg>Five commands</h2>
+    <div class="cmds">
+      <div class="cmd glass"><code><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-sunrise"/></svg>morning</code><p>Gather everything, rank it, and tell you the first thing to do.</p></div>
+      <div class="cmd glass"><code><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-refresh-cw"/></svg>refresh</code><p>Re-check what changed and say what moved in or out of focus.</p></div>
+      <div class="cmd glass"><code><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-moon"/></svg>wrap</code><p>What got done, what carries over, and who's still waiting on you.</p></div>
+      <div class="cmd glass"><code><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-info"/></svg>explain</code><p>Why an item ranks where it does, rule by rule.</p></div>
+      <div class="cmd glass"><code><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-stethoscope"/></svg>doctor</code><p>Which sources are connected and how, without fetching any data.</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="rank-h">
+    <h2 id="rank-h"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-radar"/></svg>How ranking works</h2>
+    <div class="rank glass panel">
+      <svg viewBox="0 0 300 300" role="img" aria-label="Ring chart: blocked on you and incidents carry the most weight">
+        <g fill="none" stroke-width="22">
+          <circle cx="150" cy="150" r="110" stroke="rgba(94,241,255,.12)"/>
+          <circle cx="150" cy="150" r="110" stroke="#ff4d4d" stroke-dasharray="186 505" transform="rotate(-90 150 150)"/>
+          <circle cx="150" cy="150" r="110" stroke="#19d3f0" stroke-dasharray="140 551" stroke-dashoffset="-190" transform="rotate(-90 150 150)"/>
+          <circle cx="150" cy="150" r="110" stroke="#ffb020" stroke-dasharray="116 575" stroke-dashoffset="-334" transform="rotate(-90 150 150)"/>
+          <circle cx="150" cy="150" r="110" stroke="#5ef1ff" stroke-dasharray="70 621" stroke-dashoffset="-454" transform="rotate(-90 150 150)"/>
+          <circle cx="150" cy="150" r="110" stroke="#8fb0c6" stroke-dasharray="160 531" stroke-dashoffset="-528" transform="rotate(-90 150 150)"/>
+        </g>
+        <text x="150" y="145" text-anchor="middle" style="font-size:30px;fill:#5ef1ff">RULES</text>
+        <text x="150" y="170" text-anchor="middle">not vibes</text>
+      </svg>
+      <div>
+        <p>Scores are fixed rules, so <code class="mono">explain</code> can always tell you why. The model writes the summary; the maths stays predictable.</p>
+        <table>
+          <tr><td>Production incident</td><td>+40</td></tr>
+          <tr><td>Someone is blocked on you</td><td>+30</td></tr>
+          <tr><td>Due today or overdue</td><td>+25</td></tr>
+          <tr><td>VIP sender or mention</td><td>+15</td></tr>
+          <tr><td>PR waiting, per working day</td><td>+5</td></tr>
+          <tr class="neg"><td>Newsletters and bot noise</td><td>−20</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="src-h">
+    <h2 id="src-h"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-activity"/></svg>Sources, with fallbacks</h2>
+    <div class="sources">
+      <div class="src glass"><h3><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-git-pull-request"/></svg>GitHub</h3><p>GitHub MCP server, or the <code class="mono">gh</code> CLI. Review requests, your PRs, notifications.</p></div>
+      <div class="src glass"><h3><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-kanban"/></svg>Jira</h3><p>Atlassian remote MCP server, or <code class="mono">acli</code> with a JQL filter.</p></div>
+      <div class="src glass"><h3><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-mail"/></svg>Outlook</h3><p>Microsoft Graph MCP or the <code class="mono">m365</code> CLI. Mail and calendar.</p></div>
+      <div class="src glass"><h3><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-message-square"/></svg>Teams</h3><p>Same Graph options, or paste mode when your tenant won't allow an app.</p></div>
+    </div>
+    <p class="note">Missing a source? It's marked offline and the rest still runs. With nothing connected, today runs on built-in demo data.</p>
+  </section>
+
+  <section id="demo" aria-labelledby="demo-h">
+    <h2 id="demo-h"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-gauge"/></svg>The HUD, running on demo data</h2>
+    <div class="demo glass"><iframe src="demo/index.html" title="today HUD running on demo data" loading="lazy"></iframe></div>
+    <p class="note">A single HTML file with no server or build. The skill writes <code class="mono">state/focus.js</code>; the HUD reloads it every minute.</p>
+  </section>
+
+  <section aria-labelledby="safe-h">
+    <h2 id="safe-h"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-shield-alert"/></svg>Safe by default</h2>
+    <ul class="safety glass">
+      <li>Read-only. Replies, reactions and ticket moves need your yes, one at a time.</li>
+      <li>Email and chat text is treated as data, never as instructions. The demo data includes a prompt-injection email to prove it.</li>
+      <li>Links and attachments are never opened. State stays on your machine in <code class="mono">~/.today</code>.</li>
+    </ul>
+  </section>
+
+  <section id="install" aria-labelledby="install-h">
+    <h2 id="install-h"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-terminal"/></svg>Install</h2>
+    <pre class="code glass">git clone https://github.com/DigiAye/agent-skills.git
+cd agent-skills &amp;&amp; ./install.sh
+
+# then, in Claude Code, Cursor or Kiro
+/today morning</pre>
+    <p class="note">Want it to refresh on its own? The skill's <a href="https://github.com/DigiAye/agent-skills/blob/main/skills/today/references/sources.md#scheduling-refreshes">scheduling notes</a> have a <code class="mono">launchd</code> and <code class="mono">cron</code> example.</p>
+  </section>
+</main>
+
+<footer class="site-footer wrap">
+  <p>By <a href="https://www.digiaye.scot">Joe Morrison · DigiAye</a> · <a href="https://github.com/DigiAye/agent-skills">Source on GitHub</a> · MIT licence</p>
+  <p>Design inspired by film HUD interfaces. Not affiliated with, or endorsed by, Marvel or Disney. Icons by <a href="https://lucide.dev">Lucide</a>.</p>
+</footer>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="liquid" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.008 0.012" numOctaves="2" seed="3" result="noise"/>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="24" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+</body>
+</html>

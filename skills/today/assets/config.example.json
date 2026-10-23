@@ -1,0 +1,19 @@
+{
+  "name": "Your Name",
+  "timezone": "Europe/London",
+  "workingHours": { "start": "09:00", "end": "17:30", "days": ["Mon", "Tue", "Wed", "Thu", "Fri"] },
+  "demo": false,
+  "windowHours": 24,
+  "vips": ["manager@example.com", "Product Lead"],
+  "sources": {
+    "github": { "enabled": true, "orgs": ["your-org"] },
+    "jira": { "enabled": true, "projects": ["ABC"] },
+    "outlook": { "enabled": true, "folders": ["Inbox"], "ignoreSenders": ["noreply@", "notifications@"] },
+    "teams": { "enabled": true, "channels": ["Team / General", "Team / Releases"], "includeChats": true }
+  },
+  "scoring": {
+    "blockedOnMe": 30,
+    "dueToday": 25,
+    "vip": 15
+  }
+}

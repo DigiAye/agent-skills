@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>assemble · a four-model review loop for Claude, Cursor and Kiro</title>
+<meta name="description" content="assemble is a portable Agent Skill: four models take turns building, doubting, breaking and simplifying one answer over up to 36 rounds, a Ralph Wiggum loop on a team scale.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/glass.css">
+<style>
+  :root { --bg: #0a0c14; --panel: #1e2433; --accent: #f2b134; --accent-2: #d7263d;
+    --builder: #2f80ed; --skeptic: #d7263d; --edge: #f2b134; --simple: #2ecc71; --text: #f3f4f7; --muted: #a9b1c3; }
+  body { background: var(--bg); color: var(--text); font: 17px/1.6 "Space Grotesk", system-ui, sans-serif; }
+  .field { position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(800px 600px at 10% 0%, rgba(47, 128, 237, .30), transparent 60%),
+      radial-gradient(800px 600px at 95% 15%, rgba(215, 38, 61, .30), transparent 60%),
+      radial-gradient(700px 500px at 80% 100%, rgba(46, 204, 113, .16), transparent 60%),
+      radial-gradient(700px 500px at 10% 100%, rgba(242, 177, 52, .20), transparent 60%),
+      linear-gradient(180deg, #0a0c14, #0d1120); }
+  .steel { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .05;
+    background: repeating-linear-gradient(115deg, #fff 0 1px, transparent 1px 14px); }
+  main, .site-nav { position: relative; z-index: 3; }
+  .site-nav { font: 20px "Bebas Neue", sans-serif; letter-spacing: .08em; }
+  .brand { display: flex; align-items: center; gap: 10px; color: var(--accent); }
+  h1, h2, h3 { font-family: "Bebas Neue", Impact, sans-serif; font-weight: 400; letter-spacing: .04em; line-height: .95; }
+  h2 { font-size: clamp(40px, 6vw, 64px); margin: 0 0 22px; display: flex; gap: 14px; align-items: center; }
+  h2 .icon { width: 34px; height: 34px; color: var(--accent); }
+  section { padding: 80px 0 10px; }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+  .muted { color: var(--muted); }
+
+  /* Hero */
+  .hero { min-height: 92vh; display: grid; align-content: center; gap: 34px; padding-top: 30px; }
+  .hero h1 { font-size: clamp(84px, 16vw, 210px); margin: 0; text-align: center;
+    background: linear-gradient(180deg, #fff 10%, #f2b134 60%, #d7263d); -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 6px 30px rgba(215, 38, 61, .35)); }
+  .hero .tag { text-align: center; font-size: clamp(19px, 2.4vw, 24px); max-width: 44ch; margin: -14px auto 0; color: var(--text); }
+  .team { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .hero-card { padding: 22px 20px; display: grid; gap: 10px; border-top: 3px solid var(--c); }
+  .hero-card .badge { width: 54px; height: 54px; border-radius: 16px; display: grid; place-items: center; background: color-mix(in srgb, var(--c) 22%, transparent); color: var(--c); box-shadow: 0 0 24px color-mix(in srgb, var(--c) 40%, transparent); }
+  .hero-card .badge .icon { width: 28px; height: 28px; stroke-width: 1.5; }
+  .hero-card h3 { margin: 0; font-size: 34px; color: var(--c); }
+  .hero-card p { margin: 0; color: var(--muted); font-size: 15px; }
+  .hero-card .slot { font: 12px "JetBrains Mono", monospace; color: var(--text); opacity: .8; text-transform: uppercase; letter-spacing: .12em; }
+  .builder { --c: var(--builder); } .skeptic { --c: var(--skeptic); } .edge { --c: var(--edge); } .simple { --c: var(--simple); }
+  .lock { position: absolute; inset: -14px; border-radius: 30px; border: 2px solid var(--accent); opacity: 0; pointer-events: none; }
+  .cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .pill.primary { background: var(--accent); color: #1a1205; font-family: "Space Grotesk", sans-serif; }
+  .pill.ghost { color: var(--text); }
+
+  /* Rounds funnel */
+  .funnel { display: grid; gap: 14px; }
+  .block { display: grid; grid-template-columns: 130px 1fr 110px; gap: 18px; align-items: center; padding: 18px 22px; }
+  .block h3 { margin: 0; font-size: 32px; color: var(--accent); }
+  .turns { display: flex; flex-wrap: wrap; gap: 6px; }
+  .turn { width: 22px; height: 22px; border-radius: 6px; background: var(--c); opacity: .9; box-shadow: 0 0 10px color-mix(in srgb, var(--c) 50%, transparent); }
+  .total { text-align: right; font: 600 15px "JetBrains Mono", monospace; }
+  .total b { display: block; font: 400 40px "Bebas Neue", sans-serif; color: var(--text); }
+  .block:nth-child(2) { width: 86%; margin-inline: auto; } .block:nth-child(3) { width: 72%; margin-inline: auto; }
+  .ask { text-align: center; padding: 16px; font-weight: 500; width: 58%; margin-inline: auto; border: 1px dashed rgba(242, 177, 52, .5); border-radius: 18px; }
+
+  /* Rotation */
+  .rotation { padding: 26px; overflow-x: auto; }
+  .rotation table { border-collapse: separate; border-spacing: 8px; width: 100%; min-width: 560px; }
+  .rotation th { font: 400 22px "Bebas Neue", sans-serif; letter-spacing: .06em; text-align: left; color: var(--muted); }
+  .rotation td { padding: 12px 14px; border-radius: 12px; background: color-mix(in srgb, var(--c) 20%, transparent); border: 1px solid color-mix(in srgb, var(--c) 50%, transparent); color: var(--text); font-weight: 500; }
+  .rotation td .icon { display: inline-block; vertical-align: -5px; margin-right: 8px; color: var(--c); }
+  .rotation tr.now td { box-shadow: 0 0 0 2px var(--c), 0 0 22px color-mix(in srgb, var(--c) 50%, transparent); }
+
+  /* Convergence */
+  .conv { display: grid; grid-template-columns: 1.4fr 1fr; gap: 26px; align-items: center; padding: 26px; }
+  .conv svg { width: 100%; height: auto; }
+  .conv .axis { stroke: rgba(255, 255, 255, .2); }
+  .conv .line { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+  .conv .area { fill: url(#convFill); }
+  .conv text { fill: var(--muted); font: 12px "JetBrains Mono", monospace; }
+  .conv ul { margin: 0; padding-left: 18px; display: grid; gap: 8px; }
+
+  /* Compare */
+  .compare { width: 100%; border-collapse: collapse; }
+  .compare th, .compare td { padding: 14px 16px; text-align: left; border-bottom: 1px solid rgba(255, 255, 255, .08); vertical-align: top; }
+  .compare th { font: 400 24px "Bebas Neue", sans-serif; letter-spacing: .05em; color: var(--accent); }
+  .compare td:first-child { color: var(--muted); width: 26%; }
+  .compare-wrap { padding: 10px 14px; overflow-x: auto; }
+
+  .adapters { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .adapter { padding: 22px; }
+  .adapter h3 { margin: 0 0 6px; font-size: 28px; }
+  .adapter p { margin: 0; color: var(--muted); font-size: 15px; }
+
+  @media (max-width: 900px) {
+    .team, .adapters { grid-template-columns: repeat(2, 1fr); }
+    .conv { grid-template-columns: 1fr; }
+    .block, .block:nth-child(2), .block:nth-child(3), .ask { width: 100%; grid-template-columns: 1fr; }
+    .total { text-align: left; }
+  }
+  @media (max-width: 520px) { .team, .adapters { grid-template-columns: 1fr; } }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-card { animation: assemble 1s cubic-bezier(.2, .9, .2, 1.1) both; }
+    .hero-card.builder { --from: -60vw, -30vh; animation-delay: .2s; }
+    .hero-card.skeptic { --from: 60vw, -30vh; animation-delay: .4s; }
+    .hero-card.edge { --from: -60vw, 30vh; animation-delay: .6s; }
+    .hero-card.simple { --from: 60vw, 30vh; animation-delay: .8s; }
+    @keyframes assemble { from { opacity: 0; transform: translate(var(--from)) rotate(-6deg) scale(.8); } to { opacity: 1; transform: none; } }
+    .lock { animation: lock 1.2s ease-out 1.8s both; }
+    @keyframes lock { 0% { opacity: 0; transform: scale(1.04); } 30% { opacity: 1; box-shadow: 0 0 60px rgba(242, 177, 52, .6); } 100% { opacity: 0; transform: scale(1); } }
+    .hero h1 { animation: rise .9s ease both; }
+    @keyframes rise { from { opacity: 0; letter-spacing: .3em; } to { opacity: 1; } }
+    .js .reveal { opacity: 0; transform: translateY(20px); transition: opacity .7s ease, transform .7s ease; }
+    .js .reveal.in { opacity: 1; transform: none; }
+    .js .conv .line { stroke-dasharray: 1400; stroke-dashoffset: 1400; transition: stroke-dashoffset 2.4s ease; }
+    .js .conv.in .line { stroke-dashoffset: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="field" aria-hidden="true"></div>
+<div class="steel" aria-hidden="true"></div>
+
+<nav class="site-nav glass wrap" aria-label="Main">
+  <a class="brand" href="../"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-users"/></svg>agent-skills</a>
+  <ul>
+    <li><a href="../today/">today</a></li>
+    <li><a href="./" aria-current="page">assemble</a></li>
+    <li><a href="https://github.com/DigiAye/agent-skills/tree/main/skills/assemble"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-github"/></svg>Source</a></li>
+  </ul>
+</nav>
+
+<main class="wrap">
+  <section class="hero" aria-labelledby="title">
+    <h1 id="title">assemble</h1>
+    <p class="tag">Four models. One answer. They take turns building it, doubting it, breaking it and trimming it, round after round, until there's nothing left to fix.</p>
+    <div class="team">
+      <div class="lock" aria-hidden="true"></div>
+      <article class="hero-card glass builder">
+        <div class="badge"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-hammer"/></svg></div>
+        <h3>The builder</h3><p>Gets it working. Fills gaps and fixes every must-fix from the last turn.</p><span class="slot">Model 1 · then rotates</span>
+      </article>
+      <article class="hero-card glass skeptic">
+        <div class="badge"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-shield-alert"/></svg></div>
+        <h3>The skeptic</h3><p>Assumes it's wrong somewhere and finds where. Checks every claim against the task.</p><span class="slot">Model 2 · then rotates</span>
+      </article>
+      <article class="hero-card glass edge">
+        <div class="badge"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-bug"/></svg></div>
+        <h3>The breaker</h3><p>Empty inputs, failures, security, cost. Whatever the happy path forgot.</p><span class="slot">Model 3 · then rotates</span>
+      </article>
+      <article class="hero-card glass simple">
+        <div class="badge"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-scissors"/></svg></div>
+        <h3>The simplifier</h3><p>Cuts what the task didn't ask for. Smaller, clearer, same result.</p><span class="slot">Model 4 · then rotates</span>
+      </article>
+    </div>
+    <div class="cta">
+      <a class="pill primary" href="#install"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-terminal"/></svg>Install</a>
+      <a class="pill ghost glass" href="#rounds"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-repeat"/></svg>How the rounds work</a>
+    </div>
+  </section>
+
+  <section id="rounds" class="reveal" aria-labelledby="rounds-h">
+    <h2 id="rounds-h"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-repeat"/></svg>36 rounds, tightening as it goes</h2>
+    <p class="muted">A round is one model's turn. A pass is all four. Each block has fewer passes, because the answer should need less each time.</p>
+    <div class="funnel" id="funnel"></div>
+  </section>
+
+  <section class="reveal" aria-labelledby="rot-h">
+    <h2 id="rot-h"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-orbit"/></svg>Everyone plays every role</h2>
+    <p class="muted">Roles rotate each pass, so no model only ever builds or only ever criticises. Each turn sees the current answer and the last critique, but never who wrote it.</p>
+    <div class="rotation glass"><table id="rotation"><caption class="sr-only">Role played by each model in each pass</caption></table></div>
+  </section>
+
+  <section class="reveal" aria-labelledby="conv-h">
+    <h2 id="conv-h"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-check-check"/></svg>It knows when to stop</h2>
+    <div class="conv glass refract" id="conv">
+      <svg viewBox="0 0 620 300" role="img" aria-label="Example run: must-fix issues fall from 9 to 0 by round 22, where the loop converges and stops early">
+        <defs><linearGradient id="convFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#f2b134" stop-opacity=".35"/><stop offset="1" stop-color="#f2b134" stop-opacity="0"/></linearGradient></defs>
+        <line class="axis" x1="40" y1="250" x2="600" y2="250"/><line class="axis" x1="40" y1="20" x2="40" y2="250"/>
+        <line class="axis" x1="273" y1="20" x2="273" y2="250" stroke-dasharray="4 6"/><line class="axis" x1="448" y1="20" x2="448" y2="250" stroke-dasharray="4 6"/>
+        <path class="area" id="convArea"/><path class="line" id="convLine"/>
+        <circle id="convDot" r="7" fill="#2ecc71"/>
+        <text x="40" y="272">1</text><text x="262" y="272">16</text><text x="437" y="272">28</text><text x="585" y="272">36</text>
+        <text x="8" y="30">MUST</text>
+        <text id="convLabel" fill="#2ecc71">converged</text>
+      </svg>
+      <ul>
+        <li>Every critique tags issues as <span class="mono">MUST</span> or <span class="mono">NICE</span>.</li>
+        <li>A full pass with no <span class="mono">MUST</span>s and only tiny diffs ends the run early.</li>
+        <li>Or a model can declare it done, and the next one has to agree.</li>
+        <li>Stuck for a whole block? It stops and tells you what's blocking.</li>
+        <li>At 36 it always asks before going further.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="reveal" aria-labelledby="cmp-h">
+    <h2 id="cmp-h"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-git-merge"/></svg>A Ralph Wiggum loop, with a team</h2>
+    <div class="compare-wrap glass">
+      <table class="compare">
+        <thead><tr><th scope="col"></th><th scope="col">Plain Ralph loop</th><th scope="col">assemble</th></tr></thead>
+        <tbody>
+          <tr><td>Who works</td><td>One model, same prompt, again and again</td><td>Four models in relay, each with a different job</td></tr>
+          <tr><td>Context</td><td>Fresh each loop; progress in files</td><td>Same: task, current answer and last critique, from files</td></tr>
+          <tr><td>Blind spots</td><td>The same model keeps the same ones</td><td>Each model checks work it didn't write</td></tr>
+          <tr><td>Stopping</td><td>A completion promise or max iterations</td><td>No must-fixes for a full pass, an agreed promise, or 36</td></tr>
+          <tr><td>Where it shines</td><td>Grinding through a build until tests pass</td><td>Designs, plans, tricky code and answers you need to trust</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="reveal" aria-labelledby="ad-h">
+    <h2 id="ad-h"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-users"/></svg>Where the four come from</h2>
+    <div class="adapters">
+      <div class="adapter glass"><h3 style="color: var(--builder)">In-tool subagents</h3><p>If your tool can pick a model per subagent. Cursor can mix vendors; in Claude Code and Kiro you get four Claude variants.</p></div>
+      <div class="adapter glass"><h3 style="color: var(--edge)">Vendor CLIs</h3><p><span class="mono">claude</span>, <span class="mono">codex</span>, <span class="mono">gemini</span> and <span class="mono">agent</span>, one call per turn. The real multi-vendor team.</p></div>
+      <div class="adapter glass"><h3 style="color: var(--simple)">Solo mode</h3><p>One model plays all four roles with a fresh start each turn. Works anywhere.</p></div>
+    </div>
+    <p class="muted">The CLI mode sends your task to every vendor on the list. Set <span class="mono">allowedModels</span> or <span class="mono">localOnly</span> in the config to control that.</p>
+  </section>
+
+  <section id="install" class="reveal" aria-labelledby="install-h">
+    <h2 id="install-h"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-terminal"/></svg>Install</h2>
+    <pre class="code glass">git clone https://github.com/DigiAye/agent-skills.git
+cd agent-skills &amp;&amp; ./install.sh
+
+# then, in Claude Code, Cursor or Kiro
+/assemble Design a rate limiter for our public API
+/assemble --quick Review this migration plan     # 8 rounds
+/assemble resume</pre>
+  </section>
+</main>
+
+<footer class="site-footer wrap">
+  <p>By <a href="https://www.digiaye.scot">Joe Morrison · DigiAye</a> · <a href="https://github.com/DigiAye/agent-skills">Source on GitHub</a> · MIT licence</p>
+  <p>Built on Geoffrey Huntley's <a href="https://ghuntley.com/ralph/">Ralph Wiggum technique</a> and Andrej Karpathy's <a href="https://github.com/karpathy/llm-council">llm-council</a>. Not affiliated with, or endorsed by, Marvel or Disney. Icons by <a href="https://lucide.dev">Lucide</a>.</p>
+</footer>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="liquid" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.01 0.014" numOctaves="2" seed="11" result="noise"/>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="30" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<script>
+  const ROLES = [
+    { key: "builder", name: "Builder", icon: "hammer" },
+    { key: "skeptic", name: "Skeptic", icon: "shield-alert" },
+    { key: "edge", name: "Breaker", icon: "bug" },
+    { key: "simple", name: "Simplifier", icon: "scissors" }
+  ];
+  const ICON = (n) => `<svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-${n}"/></svg>`;
+  const SCHEDULE = [4, 3, 2];
+
+  // Rounds funnel
+  let running = 0;
+  document.getElementById("funnel").innerHTML = SCHEDULE.map((passes, b) => {
+    const turns = passes * 4; running += turns;
+    const cells = Array.from({ length: turns }, (_, t) => {
+      const pass = Math.floor(t / 4), model = t % 4, role = ROLES[(model + pass) % 4];
+      return `<span class="turn" style="--c: var(--${role.key})" title="Pass ${pass + 1}, model ${model + 1}: ${role.name}"></span>`;
+    }).join("");
+    return `<div class="block glass"><h3>Block ${b + 1}</h3><div class="turns" aria-label="${passes} passes of 4 models">${cells}</div><div class="total"><b>${passes} × 4</b>${running} total</div></div>`;
+  }).join("") + `<div class="ask glass">After 36: “Want another block?”</div>`;
+
+  // Role rotation table
+  const table = document.getElementById("rotation");
+  const head = `<thead><tr><th scope="col">Pass</th>${[1, 2, 3, 4].map((m) => `<th scope="col">Model ${m}</th>`).join("")}</tr></thead>`;
+  const rows = [0, 1, 2, 3].map((p) => `<tr data-pass="${p}"><th scope="row">${p + 1}</th>${[0, 1, 2, 3].map((m) => {
+    const r = ROLES[(m + p) % 4];
+    return `<td style="--c: var(--${r.key})">${ICON(r.icon)}${r.name}</td>`;
+  }).join("")}</tr>`).join("");
+  table.insertAdjacentHTML("beforeend", head + `<tbody>${rows}</tbody>`);
+
+  // Convergence chart (example run that converges at round 22)
+  const must = [9, 8, 8, 7, 6, 6, 5, 5, 4, 4, 4, 3, 3, 2, 2, 2, 2, 1, 1, 0, 0, 0];
+  const x = (i) => 40 + (i / 35) * 560, y = (v) => 250 - (v / 9) * 220;
+  const pts = must.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`);
+  document.getElementById("convLine").setAttribute("d", "M" + pts.join(" L"));
+  document.getElementById("convArea").setAttribute("d", `M${x(0)},250 L${pts.join(" L")} L${x(must.length - 1)},250 Z`);
+  const end = must.length - 1, dot = document.getElementById("convDot"), label = document.getElementById("convLabel");
+  dot.setAttribute("cx", x(end)); dot.setAttribute("cy", y(0));
+  label.setAttribute("x", x(end) + 12); label.setAttribute("y", y(0) - 10);
+  label.textContent = `converged at round ${end + 1}`;
+
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.documentElement.classList.add("js");
+
+  // Highlight the current pass, cycling through
+  if (!reduced) {
+    let p = 0;
+    const tick = () => { table.querySelectorAll("tr[data-pass]").forEach((tr) => tr.classList.toggle("now", +tr.dataset.pass === p)); p = (p + 1) % 4; };
+    tick(); setInterval(tick, 2200);
+  }
+
+  // Scroll reveals
+  const reveal = (n) => n.classList.add("in");
+  if (reduced || !("IntersectionObserver" in window)) {
+    document.querySelectorAll(".reveal, .conv").forEach(reveal);
+  } else {
+    const io = new IntersectionObserver((entries) => entries.forEach((e) => { if (e.isIntersecting) { reveal(e.target); io.unobserve(e.target); } }), { threshold: .2 });
+    document.querySelectorAll(".reveal, .conv").forEach((n) => io.observe(n));
+  }
+</script>
+</body>
+</html>

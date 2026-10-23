@@ -1,0 +1,17 @@
+{
+  "models": [
+    "claude:opus",
+    "codex:default",
+    "gemini:default",
+    "cursor:default"
+  ],
+  "allowedModels": ["claude:*", "codex:*", "gemini:*", "cursor:*"],
+  "localOnly": false,
+  "schedule": [4, 3, 2],
+  "quickSchedule": [2],
+  "maxIterations": 36,
+  "noChangeLines": 5,
+  "timeoutSeconds": 600,
+  "checks": [],
+  "pricesPerMillionTokens": {}
+}

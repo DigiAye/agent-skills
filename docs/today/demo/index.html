@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>today · focus HUD</title>
+<style>
+  :root {
+    --bg: #050b14; --panel: #0b1a2b; --cyan: #19d3f0; --glow: #5ef1ff;
+    --amber: #ffb020; --red: #ff4d4d; --text: #dcebf5; --muted: #8fb0c6;
+    --glass: rgba(255, 255, 255, .06); --edge: rgba(94, 241, 255, .22);
+    --mono: ui-monospace, "JetBrains Mono", SFMono-Regular, Menlo, monospace;
+    --display: "Rajdhani", "Segoe UI", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--text);
+    font: 15px/1.45 Inter, system-ui, -apple-system, sans-serif; }
+  body { background:
+      radial-gradient(1200px 700px at 50% -10%, rgba(25, 211, 240, .14), transparent 60%),
+      radial-gradient(800px 500px at 100% 100%, rgba(255, 176, 32, .06), transparent 60%), var(--bg); }
+  .scan { pointer-events: none; position: fixed; inset: 0; opacity: .03;
+    background: repeating-linear-gradient(0deg, #fff 0 1px, transparent 1px 3px); }
+  .reticle { position: fixed; width: 900px; height: 900px; left: 50%; top: 46%;
+    transform: translate(-50%, -50%); opacity: .35; pointer-events: none; }
+  .reticle circle { fill: none; stroke: var(--cyan); }
+  @media (prefers-reduced-motion: no-preference) {
+    .spin { transform-origin: 450px 450px; animation: spin 90s linear infinite; }
+    .spin.rev { animation-direction: reverse; animation-duration: 140s; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .stale { animation: pulse 2.4s ease-in-out infinite; }
+    @keyframes pulse { 50% { box-shadow: 0 0 0 1px var(--amber), 0 0 18px rgba(255, 176, 32, .35); } }
+  }
+  main { position: relative; max-width: 1180px; margin: 0 auto; padding: 28px 20px 40px;
+    display: grid; gap: 16px; grid-template-columns: 2fr 1fr; }
+  header { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; }
+  h1 { font: 600 34px/1 var(--display); letter-spacing: .14em; text-transform: uppercase; margin: 0; color: var(--glow); }
+  h2 { font: 600 13px/1 var(--display); letter-spacing: .22em; text-transform: uppercase; color: var(--cyan);
+    margin: 0 0 12px; display: flex; gap: 8px; align-items: center; }
+  .meta { font: 12px var(--mono); color: var(--muted); text-align: right; }
+  .demo { color: var(--amber); }
+  .glass { background: var(--glass); border: 1px solid var(--edge); border-radius: 18px; padding: 18px;
+    -webkit-backdrop-filter: blur(14px) saturate(160%); backdrop-filter: blur(14px) saturate(160%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .18), 0 10px 40px rgba(0, 0, 0, .35); }
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .glass { background: var(--panel); } }
+  @media (prefers-reduced-transparency: reduce) { .glass { background: rgba(11, 26, 43, .92); } }
+  @media (prefers-contrast: more) { .glass { background: var(--panel); border-color: var(--glow); box-shadow: none; } }
+  .first { grid-column: 1 / -1; font: 600 20px/1.3 var(--display); letter-spacing: .03em; }
+  .first span { color: var(--amber); font: 12px var(--mono); letter-spacing: .2em; display: block; margin-bottom: 6px; }
+  ol, ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .item { display: grid; grid-template-columns: 28px 1fr auto; gap: 10px; align-items: start;
+    padding: 10px 12px; border-radius: 12px; background: rgba(5, 11, 20, .45); border: 1px solid rgba(94, 241, 255, .08); }
+  .item a { color: var(--text); text-decoration: none; }
+  .item a:hover, .item a:focus-visible { color: var(--glow); text-decoration: underline; }
+  .why { font: 12px var(--mono); color: var(--muted); margin-top: 3px; }
+  .score { font: 600 22px/1 var(--display); color: var(--glow); min-width: 2.5ch; text-align: right; }
+  .focus .item { padding: 14px; } .focus .score { font-size: 30px; }
+  svg.i { width: 20px; height: 20px; stroke: var(--cyan); fill: none; stroke-width: 1.25; stroke-linecap: round; stroke-linejoin: round; }
+  .wait .item { border-color: rgba(255, 176, 32, .3); } .wait svg.i { stroke: var(--amber); }
+  .tele { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; grid-column: 1 / -1; }
+  .src { font: 12px var(--mono); text-transform: uppercase; letter-spacing: .12em; padding: 10px 12px; }
+  .src b { display: block; font: 600 22px/1.1 var(--display); color: var(--text); letter-spacing: .05em; }
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
+  .dot.manual { background: var(--amber); box-shadow: 0 0 8px var(--amber); } .dot.offline { background: var(--red); box-shadow: none; }
+  .cal li { font: 13px var(--mono); display: flex; gap: 10px; } .cal time { color: var(--cyan); }
+  .col { display: grid; gap: 16px; align-content: start; }
+  .empty { color: var(--muted); font-style: italic; }
+  @media (max-width: 820px) { main { grid-template-columns: 1fr; } .tele { grid-template-columns: repeat(2, 1fr); } }
+</style>
+</head>
+<body>
+<svg class="reticle" viewBox="0 0 900 900" aria-hidden="true">
+  <g class="spin"><circle cx="450" cy="450" r="420" stroke-width="1" stroke-dasharray="4 10"/></g>
+  <g class="spin rev"><circle cx="450" cy="450" r="360" stroke-width="2" stroke-dasharray="120 40 20 40"/></g>
+  <circle cx="450" cy="450" r="300" stroke-width=".6"/>
+  <g class="spin"><circle cx="450" cy="450" r="240" stroke-width="6" stroke-dasharray="2 14" opacity=".6"/></g>
+</svg>
+<div class="scan" aria-hidden="true"></div>
+
+<main>
+  <header>
+    <h1>today</h1>
+    <div class="meta" id="meta" aria-live="polite">Loading…</div>
+  </header>
+  <section class="glass first" id="first"></section>
+  <section class="tele" id="sources" aria-label="Sources"></section>
+  <section class="glass focus"><h2>Focus</h2><ol id="focus"></ol></section>
+  <div class="col">
+    <section class="glass wait"><h2>Waiting on you</h2><ul id="wait"></ul></section>
+    <section class="glass cal"><h2>Calendar</h2><ul id="cal"></ul></section>
+  </div>
+  <section class="glass" style="grid-column: 1 / -1"><h2>Queue</h2><ul id="queue"></ul></section>
+</main>
+
+<script>
+  // Item text comes from mail, chat and tickets, so it is only ever set via textContent.
+  const ICONS = {
+    github: '<circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/><line x1="6" x2="6" y1="9" y2="21"/>',
+    jira: '<path d="M6 5v11"/><path d="M12 5v6"/><path d="M18 5v14"/>',
+    outlook: '<rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>',
+    teams: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'
+  };
+  const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+  const icon = (name) => { const s = document.createElementNS("http://www.w3.org/2000/svg", "svg"); s.setAttribute("class", "i"); s.setAttribute("viewBox", "0 0 24 24"); s.setAttribute("aria-hidden", "true"); s.innerHTML = ICONS[name] || ICONS.jira; return s; };
+  const safeUrl = (u) => { try { const p = new URL(u); return ["https:", "http:"].includes(p.protocol) ? p.href : null; } catch { return null; } };
+  const hhmm = (iso) => new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+  function item(it) {
+    const li = el("li", "item" + (it.stale ? " stale" : ""));
+    li.append(icon(it.source));
+    const body = el("div");
+    const url = it.url && safeUrl(it.url);
+    const title = url ? Object.assign(el("a", null, it.title), { href: url, target: "_blank", rel: "noopener noreferrer" }) : el("span", null, it.title);
+    body.append(title, el("div", "why", (it.reasons || []).join("  ·  ")));
+    li.append(body, el("div", "score", Math.round(it.score ?? 0)));
+    return li;
+  }
+  function list(id, items) {
+    const root = document.getElementById(id);
+    root.replaceChildren(...(items && items.length ? items.map(item) : [el("li", "empty", "Nothing here.")]));
+  }
+  function render(d) {
+    const updated = new Date(d.lastUpdated);
+    const meta = document.getElementById("meta");
+    meta.replaceChildren(el("div", null, `${d.mode.toUpperCase()} · updated ${updated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`));
+    if (d.demo) meta.append(el("div", "demo", "DEMO DATA · nothing here is real"));
+    const first = document.getElementById("first");
+    first.replaceChildren(el("span", null, "FIRST ACTION"), document.createTextNode(d.firstAction || "Nothing urgent. Pick from the focus list."));
+    document.getElementById("sources").replaceChildren(...d.sources.map((s) => {
+      const box = el("div", "glass src");
+      box.append(el("span", "dot " + s.status), document.createTextNode(`${s.name} · ${s.via || s.status}`), el("b", null, s.status === "offline" ? "offline" : `${s.items ?? 0} items`));
+      return box;
+    }));
+    list("focus", d.focus); list("wait", d.waitingOnMe); list("queue", d.queue);
+    document.getElementById("cal").replaceChildren(...(d.calendar || []).map((c) => {
+      const li = el("li"); li.append(el("time", null, `${hhmm(c.start)}–${hhmm(c.end)}`), el("span", null, c.title)); return li;
+    }));
+  }
+  function load(src, fallback) {
+    const s = document.createElement("script");
+    s.src = src;
+    s.onload = () => window.TODAY ? render(window.TODAY) : fallback && load(fallback);
+    s.onerror = () => fallback ? load(fallback) : (document.getElementById("meta").textContent = "No state found. Run /today morning.");
+    document.head.append(s);
+  }
+  load("state/focus.js", "focus.example.js");
+  setInterval(() => { if (!window.TODAY?.demo) location.reload(); }, 60000);
+</script>
+</body>
+</html>

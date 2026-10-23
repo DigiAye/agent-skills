@@ -1,0 +1,5 @@
+.DS_Store
+state/
+.assemble/
+.today/
+*.local.md

@@ -1,0 +1,5 @@
+[
+  { "id": "SHOP-311", "type": "ticket", "title": "Checkout fails for saved cards on iOS 18", "url": "https://example.atlassian.net/browse/SHOP-311", "priority": "Highest", "labels": ["incident"], "due": "2026-10-23T17:00:00Z", "updated": "2026-10-23T07:45:00Z" },
+  { "id": "SHOP-298", "type": "ticket", "title": "Spike: feature flags for phased rollout", "url": "https://example.atlassian.net/browse/SHOP-298", "priority": "Medium", "due": "2026-10-27T17:00:00Z", "updated": "2026-10-20T14:00:00Z" },
+  { "id": "SHOP-305", "type": "ticket", "title": "Update API docs for order status", "url": "https://example.atlassian.net/browse/SHOP-305", "priority": "Low", "updated": "2026-10-19T10:00:00Z" }
+]

@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://digiaye.github.io/agent-skills/schemas/today-state.json",
+  "title": "today HUD state",
+  "description": "Shape of the object assigned to window.TODAY in state/focus.js.",
+  "type": "object",
+  "required": ["lastUpdated", "mode", "sources", "focus", "queue"],
+  "properties": {
+    "lastUpdated": { "type": "string", "format": "date-time" },
+    "mode": { "enum": ["morning", "refresh", "wrap"] },
+    "demo": { "type": "boolean" },
+    "planningFor": { "type": "string", "format": "date" },
+    "firstAction": { "type": "string" },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "status"],
+        "properties": {
+          "name": { "enum": ["github", "jira", "outlook", "teams"] },
+          "status": { "enum": ["online", "offline", "manual"] },
+          "via": { "type": "string", "description": "e.g. mcp, gh, acli, m365, paste" },
+          "items": { "type": "integer" }
+        }
+      }
+    },
+    "focus": { "type": "array", "maxItems": 3, "items": { "$ref": "#/$defs/workItem" } },
+    "queue": { "type": "array", "items": { "$ref": "#/$defs/workItem" } },
+    "waitingOnMe": { "type": "array", "items": { "$ref": "#/$defs/workItem" } },
+    "calendar": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title", "start", "end"],
+        "properties": {
+          "title": { "type": "string" },
+          "start": { "type": "string", "format": "date-time" },
+          "end": { "type": "string", "format": "date-time" }
+        }
+      }
+    },
+    "changes": { "type": "array", "items": { "type": "string" }, "description": "What moved since the last run" }
+  },
+  "$defs": {
+    "workItem": {
+      "type": "object",
+      "required": ["id", "source", "type", "title", "score"],
+      "properties": {
+        "id": { "type": "string" },
+        "source": { "enum": ["github", "jira", "outlook", "teams"] },
+        "type": { "enum": ["pr-review", "pr-mine", "issue", "ticket", "email", "chat", "mention", "channel"] },
+        "title": { "type": "string", "maxLength": 140 },
+        "url": { "type": "string" },
+        "people": { "type": "array", "items": { "type": "string" } },
+        "due": { "type": "string", "format": "date-time" },
+        "updated": { "type": "string", "format": "date-time" },
+        "waitingOnMe": { "type": "boolean" },
+        "score": { "type": "number" },
+        "reasons": { "type": "array", "items": { "type": "string" } },
+        "stale": { "type": "boolean" }
+      }
+    }
+  }
+}

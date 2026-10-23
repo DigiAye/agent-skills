@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>agent-skills · portable skills for Claude, Cursor and Kiro</title>
+<meta name="description" content="Two portable Agent Skills: today, a daily focus HUD across Teams, Outlook, GitHub and Jira, and assemble, a four-model review loop.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono&family=Rajdhani:wght@600&family=Bebas+Neue&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/glass.css">
+<style>
+  :root { --bg: #070a12; --panel: #121826; --accent: #5ef1ff; --accent-2: #f2b134; }
+  body { background: var(--bg); color: #eef2f7; font: 16px/1.55 Inter, system-ui, sans-serif; }
+  .bg { position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(700px 500px at 20% 20%, rgba(25, 211, 240, .28), transparent 60%),
+      radial-gradient(700px 500px at 85% 70%, rgba(215, 38, 61, .26), transparent 60%),
+      radial-gradient(500px 400px at 60% 10%, rgba(242, 177, 52, .18), transparent 60%); }
+  main { position: relative; z-index: 1; }
+  .hero { padding: 90px 0 40px; }
+  h1 { font: 600 clamp(40px, 7vw, 76px)/1 Rajdhani, sans-serif; letter-spacing: .04em; margin: 0 0 16px; }
+  .lede { font-size: 20px; max-width: 62ch; color: #c9d3e0; margin: 0; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 22px; padding: 20px 0 40px; }
+  .card { padding: 30px; text-decoration: none; display: grid; gap: 14px; transition: transform .25s ease; }
+  @media (prefers-reduced-motion: no-preference) { .card:hover { transform: translateY(-4px); } }
+  .card h2 { margin: 0; font-size: 34px; display: flex; align-items: center; gap: 12px; }
+  .card.today h2 { font-family: Rajdhani, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: #5ef1ff; }
+  .card.assemble h2 { font-family: "Bebas Neue", sans-serif; letter-spacing: .06em; color: #f2b134; font-size: 42px; }
+  .card p { margin: 0; color: #c9d3e0; }
+  .card .go { font-weight: 600; display: inline-flex; gap: 8px; align-items: center; }
+  .works { display: flex; flex-wrap: wrap; gap: 10px; list-style: none; padding: 0; margin: 10px 0 0; }
+  .works li { padding: 6px 12px; border-radius: 999px; background: rgba(255, 255, 255, .07); font: 13px "JetBrains Mono", monospace; }
+  section h2.h { font: 600 28px Rajdhani, sans-serif; letter-spacing: .06em; }
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"></div>
+<main class="wrap">
+  <section class="hero">
+    <h1>agent-skills</h1>
+    <p class="lede">Two skills from my AI-first workflow, written to the open <a href="https://agentskills.io">Agent Skills</a> standard so they run in Claude Code, Cursor, Kiro, Codex and Gemini CLI.</p>
+    <ul class="works" aria-label="Works with">
+      <li>Claude Code</li><li>Cursor</li><li>Kiro</li><li>Codex</li><li>Gemini CLI</li>
+    </ul>
+  </section>
+
+  <div class="cards">
+    <a class="card glass refract today" href="today/">
+      <h2><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#i-radar"/></svg>today</h2>
+      <p>One ranked focus list from Teams, Outlook, GitHub and Jira, kept current through the day, with a holographic HUD.</p>
+      <span class="go">Open the HUD page →</span>
+    </a>
+    <a class="card glass refract assemble" href="assemble/">
+      <h2><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#i-users"/></svg>assemble</h2>
+      <p>Four models, one answer. They take turns building, doubting, breaking and simplifying it, for up to 36 rounds.</p>
+      <span class="go">Meet the team →</span>
+    </a>
+  </div>
+
+  <section>
+    <h2 class="h">Install</h2>
+    <pre class="code">git clone https://github.com/DigiAye/agent-skills.git
+cd agent-skills &amp;&amp; ./install.sh
+
+# or
+npx skills add DigiAye/agent-skills</pre>
+  </section>
+</main>
+<footer class="site-footer wrap">
+  <p>By <a href="https://www.digiaye.scot">Joe Morrison · DigiAye</a> · <a href="https://github.com/DigiAye/agent-skills">Source on GitHub</a> · MIT licence</p>
+  <p>Not affiliated with, or endorsed by, Marvel or Disney. Icons by <a href="https://lucide.dev">Lucide</a>.</p>
+</footer>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="liquid" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.008 0.012" numOctaves="2" seed="7" result="noise"/>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="28" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+</body>
+</html>

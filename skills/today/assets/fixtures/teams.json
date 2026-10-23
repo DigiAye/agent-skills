@@ -1,0 +1,5 @@
+[
+  { "id": "tm-1", "type": "mention", "channel": "Shop / Releases", "from": "Sam", "text": "@you are we still good to cut the 3.4 release today?", "time": "2026-10-23T08:20:00Z", "waitingOnMe": true },
+  { "id": "tm-2", "type": "chat", "from": "Priya", "text": "Any chance you can look at #482 this morning?", "time": "2026-10-23T08:05:00Z", "waitingOnMe": true },
+  { "id": "tm-3", "type": "channel", "channel": "Shop / General", "from": "Bot", "text": "Daily deploy summary: 3 deploys, 0 rollbacks", "time": "2026-10-23T07:00:00Z" }
+]
