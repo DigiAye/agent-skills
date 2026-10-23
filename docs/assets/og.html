@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>agent-skills social card</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono&family=Rajdhani:wght@600;700&family=Bebas+Neue&family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="glass.css">
+<style>
+  :root { --panel: #121826; --accent: #5ef1ff; }
+  body { width: 1200px; height: 630px; margin: 0; display: grid; grid-template-columns: 1fr 1fr; overflow: hidden; font-family: Inter, sans-serif; color: #eef2f7; }
+  .half { position: relative; padding: 56px 48px; display: grid; align-content: center; gap: 20px; overflow: hidden; }
+  .t { background: radial-gradient(500px 400px at 50% 40%, rgba(25, 211, 240, .28), transparent 70%), #050b14; }
+  .a { background: radial-gradient(400px 300px at 0% 0%, rgba(47, 128, 237, .4), transparent 70%), radial-gradient(400px 300px at 100% 0%, rgba(215, 38, 61, .4), transparent 70%), radial-gradient(400px 300px at 100% 100%, rgba(46, 204, 113, .25), transparent 70%), radial-gradient(400px 300px at 0% 100%, rgba(242, 177, 52, .3), transparent 70%), #0a0c14; border-left: 3px solid #f2b134; }
+  .rings { position: absolute; width: 760px; height: 760px; left: 50%; top: 50%; transform: translate(-50%, -50%); opacity: .55; }
+  .rings circle, .rings path { fill: none; stroke: #19d3f0; }
+  h1 { margin: 0; position: relative; }
+  .t h1 { font: 700 104px/0.9 Rajdhani, sans-serif; letter-spacing: .16em; color: #5ef1ff; text-shadow: 0 0 30px rgba(94, 241, 255, .4); }
+  .a h1 { font: 400 112px/0.9 "Bebas Neue", sans-serif; letter-spacing: .03em; background: linear-gradient(180deg, #fff 10%, #f2b134 60%, #d7263d); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  p { margin: 0; font-size: 22px; line-height: 1.35; position: relative; max-width: 26ch; }
+  .list { padding: 14px; display: grid; gap: 8px; position: relative; }
+  .row { display: flex; justify-content: space-between; padding: 10px 12px; border-radius: 10px; background: rgba(5, 11, 20, .6); font-size: 16px; }
+  .row b { font: 700 20px Rajdhani, sans-serif; color: #5ef1ff; }
+  .team { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; position: relative; }
+  .card { padding: 14px 16px; border-top: 3px solid var(--c); font: 400 30px "Bebas Neue", sans-serif; color: var(--c); letter-spacing: .04em; }
+  .foot { position: absolute; bottom: 22px; right: 28px; font: 14px "JetBrains Mono", monospace; color: #a9b1c3; }
+</style>
+</head>
+<body>
+  <div class="half t">
+    <svg class="rings" viewBox="0 0 1000 1000" aria-hidden="true">
+      <circle cx="500" cy="500" r="460" stroke-width="1.5" stroke-dasharray="3 12"/>
+      <circle cx="500" cy="500" r="390" stroke-width="2" opacity=".6"/>
+      <path d="M 500 160 A 340 340 0 0 1 840 500" stroke="#ffb020" stroke-width="5"/>
+      <circle cx="500" cy="500" r="280" stroke-width="10" stroke-dasharray="2 18" opacity=".4"/>
+    </svg>
+    <h1>today</h1>
+    <p>Teams, Outlook, GitHub and Jira in one ranked focus list.</p>
+    <div class="list glass">
+      <div class="row">Checkout fails on iOS <b>80</b></div>
+      <div class="row">Review PR #482 for Priya <b>50</b></div>
+    </div>
+  </div>
+  <div class="half a">
+    <h1>assemble</h1>
+    <p>Four models. One answer. Up to 36 rounds.</p>
+    <div class="team">
+      <div class="card glass" style="--c:#2f80ed">Builder</div>
+      <div class="card glass" style="--c:#d7263d">Skeptic</div>
+      <div class="card glass" style="--c:#f2b134">Breaker</div>
+      <div class="card glass" style="--c:#2ecc71">Simplifier</div>
+    </div>
+    <div class="foot">github.com/DigiAye/agent-skills</div>
+  </div>
+</body>
+</html>
