@@ -13,7 +13,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23070a12' stroke='%235ef1ff' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%23f2b134'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;600&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/glass.css">
+<link rel="stylesheet" href="/agent-skills/assets/glass.css">
 <style>
   :root { --bg: #050b14; --panel: #0b1a2b; --accent: #19d3f0; --accent-2: #ffb020; --glow: #5ef1ff; --red: #ff4d4d; --text: #dcebf5; --muted: #8fb0c6; }
   body { background: var(--bg); color: var(--text); font: 16px/1.6 Inter, system-ui, sans-serif; }
@@ -108,9 +108,9 @@
     /* backwards fill, not forwards: the tilt transform must own the element once the boot is done */
     .boot { animation: boot .8s ease backwards; }
     .b1 { animation-delay: .9s; } .b2 { animation-delay: 1.2s; } .b3 { animation-delay: 1.5s; } .b4 { animation-delay: 1.8s; }
-    @keyframes boot { from { opacity: 0; transform: translateY(8px); filter: blur(4px); } }
+    @keyframes boot { from { opacity: 0; transform: translateY(8px); } }
     .hero h1 { animation: title 1.4s cubic-bezier(.2, .8, .2, 1) both, flicker 7s steps(1) 2s infinite; }
-    @keyframes title { from { opacity: 0; letter-spacing: .6em; filter: blur(14px); } to { opacity: 1; letter-spacing: .18em; filter: none; } }
+    @keyframes title { from { opacity: 0; letter-spacing: .6em; } to { opacity: 1; letter-spacing: .18em; } }
     @keyframes flicker { 0%, 97%, 100% { opacity: 1; } 98% { opacity: .6; } 99% { opacity: .9; } }
     .src .dot { animation: pulse 2.4s ease-in-out infinite; }
     .src:nth-child(2) .dot { animation-delay: .6s; } .src:nth-child(3) .dot { animation-delay: 1.2s; } .src:nth-child(4) .dot { animation-delay: 1.8s; }
@@ -120,9 +120,9 @@
     /* Depth of field: as you scroll, the reticle recedes and softens while the hero copy lifts away faster. */
     @supports (animation-timeline: scroll()) {
       .js .hero .rings { animation: recede linear both; animation-timeline: scroll(); animation-range: 0 90vh; }
-      @keyframes recede { to { transform: translate(-50%, -30%) scale(1.25); opacity: .25; filter: blur(5px); } }
+      @keyframes recede { to { transform: translate(-50%, -30%) scale(1.2); opacity: .2; } }
       .js .hero-core { animation: lift linear both; animation-timeline: scroll(); animation-range: 0 90vh; }
-      @keyframes lift { to { transform: translateY(-120px); opacity: 0; } }
+      @keyframes lift { to { transform: translateY(-100px); opacity: 0; } }
     }
   }
 </style>
@@ -136,11 +136,11 @@
 <div class="grain" aria-hidden="true"></div>
 
 <nav class="site-nav glass wrap" aria-label="Main">
-  <a class="brand" href="../"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-radar"/></svg>agent-skills</a>
+  <a class="brand" href="/agent-skills/"><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-radar"/></svg>agent-skills</a>
   <ul>
-    <li><a href="./" aria-current="page">today</a></li>
-    <li><a href="../assemble/">assemble</a></li>
-    <li><a href="https://github.com/DigiAye/agent-skills/tree/main/skills/today"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-github"/></svg>Source</a></li>
+    <li><a href="/agent-skills/today/" aria-current="page">today</a></li>
+    <li><a href="/agent-skills/assemble/">assemble</a></li>
+    <li><a href="https://github.com/DigiAye/agent-skills/tree/main/skills/today"><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-github"/></svg>Source</a></li>
     <li><button class="kbd-btn" type="button" data-cmdk-open aria-label="Open command palette"><kbd>⌘</kbd><kbd>K</kbd></button></li>
   </ul>
 </nav>
@@ -175,25 +175,25 @@
         <figcaption class="sr-only">Example of /today morning: four sources checked, twelve items ranked, the top three shown with their scores, a prompt-injection email demoted, and the first thing to do.</figcaption>
       </figure>
       <div class="cta boot b4">
-        <a class="pill primary" href="#install" data-magnet><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-terminal"/></svg>Install</a>
-        <a class="pill ghost glass" href="#demo"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-activity"/></svg>Live demo HUD</a>
+        <a class="pill primary" href="#install" data-magnet><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-terminal"/></svg>Install</a>
+        <a class="pill ghost glass" href="#demo"><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-activity"/></svg>Live demo HUD</a>
       </div>
     </div>
   </section>
 
   <section id="commands" class="reveal" aria-labelledby="cmds">
-    <h2 id="cmds"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-gauge"/></svg>Five commands</h2>
+    <h2 id="cmds"><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-gauge"/></svg>Five commands</h2>
     <div class="cmds stagger">
-      <div class="cmd glass" data-tilt="3"><code><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-sunrise"/></svg>morning</code><p>Gather everything, rank it, and tell you the first thing to do.</p><div class="out" aria-hidden="true">→ first: <b>iOS checkout incident</b></div></div>
-      <div class="cmd glass" data-tilt="3"><code><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-refresh-cw"/></svg>refresh</code><p>Re-check what changed and say what moved in or out of focus.</p><div class="out" aria-hidden="true"><b>↑</b> PR #482 now 55 · <span class="m">new</span> ask from Priya</div></div>
-      <div class="cmd glass" data-tilt="3"><code><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-moon"/></svg>wrap</code><p>What got done, what carries over, and who's still waiting on you.</p><div class="out" aria-hidden="true"><b>5</b> done · <b>3</b> carry over · <span class="m">1</span> waiting</div></div>
-      <div class="cmd glass" data-tilt="3"><code><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-info"/></svg>explain</code><p>Why an item ranks where it does, rule by rule.</p><div class="out" aria-hidden="true">80 = <b>+40</b> incident <b>+25</b> due today <b>+15</b> VIP · <span class="r">−0</span> noise</div></div>
-      <div class="cmd glass" data-tilt="3"><code><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-stethoscope"/></svg>doctor</code><p>Which sources are connected and how, without fetching any data.</p><div class="out" aria-hidden="true">github <b>mcp</b> · jira <b>acli</b> · outlook <b>m365</b> · teams <span class="m">paste</span></div></div>
+      <div class="cmd glass" data-tilt="3"><code><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-sunrise"/></svg>morning</code><p>Gather everything, rank it, and tell you the first thing to do.</p><div class="out" aria-hidden="true">→ first: <b>iOS checkout incident</b></div></div>
+      <div class="cmd glass" data-tilt="3"><code><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-refresh-cw"/></svg>refresh</code><p>Re-check what changed and say what moved in or out of focus.</p><div class="out" aria-hidden="true"><b>↑</b> PR #482 now 55 · <span class="m">new</span> ask from Priya</div></div>
+      <div class="cmd glass" data-tilt="3"><code><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-moon"/></svg>wrap</code><p>What got done, what carries over, and who's still waiting on you.</p><div class="out" aria-hidden="true"><b>5</b> done · <b>3</b> carry over · <span class="m">1</span> waiting</div></div>
+      <div class="cmd glass" data-tilt="3"><code><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-info"/></svg>explain</code><p>Why an item ranks where it does, rule by rule.</p><div class="out" aria-hidden="true">80 = <b>+40</b> incident <b>+25</b> due today <b>+15</b> VIP · <span class="r">−0</span> noise</div></div>
+      <div class="cmd glass" data-tilt="3"><code><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-stethoscope"/></svg>doctor</code><p>Which sources are connected and how, without fetching any data.</p><div class="out" aria-hidden="true">github <b>mcp</b> · jira <b>acli</b> · outlook <b>m365</b> · teams <span class="m">paste</span></div></div>
     </div>
   </section>
 
   <section id="ranking" class="reveal" aria-labelledby="rank-h">
-    <h2 id="rank-h"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-radar"/></svg>How ranking works</h2>
+    <h2 id="rank-h"><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-radar"/></svg>How ranking works</h2>
     <div class="rank-grid glass panel">
       <svg viewBox="0 0 300 300" role="img" aria-label="Ring chart: blocked on you and incidents carry the most weight">
         <g fill="none" stroke-width="22">
@@ -222,24 +222,24 @@
   </section>
 
   <section id="sources" class="reveal" aria-labelledby="src-h">
-    <h2 id="src-h"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-activity"/></svg>Sources, with fallbacks</h2>
+    <h2 id="src-h"><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-activity"/></svg>Sources, with fallbacks</h2>
     <div class="sources stagger">
-      <div class="src glass" data-tilt="4"><h3><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-git-pull-request"/></svg>GitHub<span class="dot" aria-hidden="true"></span></h3><p>GitHub MCP server, or the <code class="mono">gh</code> CLI. Review requests, your PRs, notifications.</p></div>
-      <div class="src glass" data-tilt="4"><h3><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-kanban"/></svg>Jira<span class="dot" aria-hidden="true"></span></h3><p>Atlassian remote MCP server, or <code class="mono">acli</code> with a JQL filter.</p></div>
-      <div class="src glass" data-tilt="4"><h3><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-mail"/></svg>Outlook<span class="dot" aria-hidden="true"></span></h3><p>Microsoft Graph MCP or the <code class="mono">m365</code> CLI. Mail and calendar.</p></div>
-      <div class="src glass" data-tilt="4"><h3><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-message-square"/></svg>Teams<span class="dot amber" aria-hidden="true"></span></h3><p>Same Graph options, or paste mode when your tenant won't allow an app.</p></div>
+      <div class="src glass" data-tilt="4"><h3><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-git-pull-request"/></svg>GitHub<span class="dot" aria-hidden="true"></span></h3><p>GitHub MCP server, or the <code class="mono">gh</code> CLI. Review requests, your PRs, notifications.</p></div>
+      <div class="src glass" data-tilt="4"><h3><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-kanban"/></svg>Jira<span class="dot" aria-hidden="true"></span></h3><p>Atlassian remote MCP server, or <code class="mono">acli</code> with a JQL filter.</p></div>
+      <div class="src glass" data-tilt="4"><h3><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-mail"/></svg>Outlook<span class="dot" aria-hidden="true"></span></h3><p>Microsoft Graph MCP or the <code class="mono">m365</code> CLI. Mail and calendar.</p></div>
+      <div class="src glass" data-tilt="4"><h3><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-message-square"/></svg>Teams<span class="dot amber" aria-hidden="true"></span></h3><p>Same Graph options, or paste mode when your tenant won't allow an app.</p></div>
     </div>
     <p class="note">Missing a source? It's marked offline and the rest still runs. With nothing connected, today runs on built-in demo data.</p>
   </section>
 
   <section id="demo" class="reveal" aria-labelledby="demo-h">
-    <h2 id="demo-h"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-gauge"/></svg>The HUD, running on demo data</h2>
+    <h2 id="demo-h"><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-gauge"/></svg>The HUD, running on demo data</h2>
     <div class="demo glass"><iframe src="demo/index.html" title="today HUD running on demo data" loading="lazy"></iframe></div>
     <p class="note">A single HTML file with no server or build. The skill writes <code class="mono">state/focus.js</code>; the HUD reloads it every minute.</p>
   </section>
 
   <section id="safety" class="reveal" aria-labelledby="safe-h">
-    <h2 id="safe-h"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-shield-alert"/></svg>Safe by default</h2>
+    <h2 id="safe-h"><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-shield-alert"/></svg>Safe by default</h2>
     <ul class="safety glass">
       <li>Read-only. Replies, reactions and ticket moves need your yes, one at a time.</li>
       <li>Email and chat text is treated as data, never as instructions. The demo data includes a prompt-injection email to prove it.</li>
@@ -248,7 +248,7 @@
   </section>
 
   <section id="install" class="reveal" aria-labelledby="install-h">
-    <h2 id="install-h"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-terminal"/></svg>Install</h2>
+    <h2 id="install-h"><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-terminal"/></svg>Install</h2>
     <pre class="code glass">git clone https://github.com/DigiAye/agent-skills.git
 cd agent-skills &amp;&amp; ./install.sh
 
@@ -278,18 +278,18 @@ cd agent-skills &amp;&amp; ./install.sh
     <feBlend in="r2" in2="g" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/>
   </filter>
 </svg>
-<script src="../assets/fx.js"></script>
+<script src="/agent-skills/assets/fx.js"></script>
 <script>
   /* Holographic radar: a polar dot field lit by a rotating sweep, expanding pings, and the odd amber contact.
      Fades as the hero scrolls away; the CSS gradient underneath is the static fallback. */
   (() => {
     const dot = FX.sprite("94,241,255"), amber = FX.sprite("255,176,32");
     let W = 0, H = 0, pts = [], blips = [], px = .5, py = .5;
-    const seed = (w, h) => { pts = []; const R = Math.hypot(w, h) * .55; for (let r = 60; r < R; r += 44) { const n = Math.round(r / 9); for (let i = 0; i < n; i++) pts.push({ r, a: (i / n) * 6.2832, lit: -9 }); } };
+    const seed = (w, h) => { pts = []; const R = Math.hypot(w, h) * .52; for (let r = 70; r < R; r += 56) { const n = Math.max(8, Math.round(r / 14)); for (let i = 0; i < n; i++) pts.push({ r, a: (i / n) * 6.2832, lit: -9 }); } };
     FX.canvas(document.getElementById("fx"), (ctx, w, h, dt, t) => {
       if (w !== W || h !== H) { W = w; H = h; seed(w, h); }
       px += (FX.pointer.x - px) * .05; py += (FX.pointer.y - py) * .05;
-      const F = Math.max(0, 1 - scrollY / (h * .95)); if (F <= 0) { ctx.clearRect(0, 0, w, h); return; }
+      const F = Math.max(0, 1 - scrollY / (h * .95)); if (F <= 0) { ctx.clearRect(0, 0, w, h); return false; }
       const cx = w / 2 - (px - .5) * 36, cy = h * .5 - (py - .5) * 24 - scrollY * .35, ang = (t * .85) % 6.2832;
       ctx.clearRect(0, 0, w, h);
       /* Sweep: a conic glow that builds up behind the arm and feathers to nothing at both ends (no hard leading edge),

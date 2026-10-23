@@ -13,7 +13,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23070a12' stroke='%235ef1ff' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%23f2b134'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/glass.css">
+<link rel="stylesheet" href="/agent-skills/assets/glass.css">
 <style>
   :root { --bg: #0a0c14; --panel: #1e2433; --accent: #f2b134; --accent-2: #d7263d;
     --builder: #2f80ed; --skeptic: #d7263d; --edge: #f2b134; --simple: #2ecc71;
@@ -147,11 +147,11 @@
     .lock { animation: lock 1.2s ease-out 1.8s both; }
     @keyframes lock { 0% { opacity: 0; transform: scale(1.04); } 30% { opacity: 1; box-shadow: 0 0 60px rgba(242, 177, 52, .6); } 100% { opacity: 0; transform: scale(1); } }
     .hero h1 { animation: rise 1s cubic-bezier(.2, .8, .2, 1) both; }
-    @keyframes rise { from { opacity: 0; letter-spacing: .3em; filter: blur(12px) drop-shadow(0 6px 30px rgba(215, 38, 61, .35)); } }
+    @keyframes rise { from { opacity: 0; letter-spacing: .3em; } }
     /* Depth of field on scroll: the title sinks back and softens, the team lifts away a touch faster. */
     @supports (animation-timeline: scroll()) {
       .js .hero h1 { animation: rise 1s cubic-bezier(.2, .8, .2, 1) both, sink linear both; animation-timeline: auto, scroll(); animation-range: normal, 0 80vh; }
-      @keyframes sink { to { transform: translateY(-30px) scale(.9); opacity: .15; filter: blur(6px) drop-shadow(0 0 0 transparent); } }
+      @keyframes sink { to { transform: translateY(-30px) scale(.92); opacity: .15; } }
       .js .stage { animation: lift linear both; animation-timeline: scroll(); animation-range: 0 80vh; }
       @keyframes lift { to { transform: translateY(-50px); opacity: .2; } }
     }
@@ -172,11 +172,11 @@
 <div class="grain" aria-hidden="true"></div>
 
 <nav class="site-nav glass wrap" aria-label="Main">
-  <a class="brand" href="../"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-users"/></svg>agent-skills</a>
+  <a class="brand" href="/agent-skills/"><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-users"/></svg>agent-skills</a>
   <ul>
-    <li><a href="../today/">today</a></li>
-    <li><a href="./" aria-current="page">assemble</a></li>
-    <li><a href="https://github.com/DigiAye/agent-skills/tree/main/skills/assemble"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-github"/></svg>Source</a></li>
+    <li><a href="/agent-skills/today/">today</a></li>
+    <li><a href="/agent-skills/assemble/" aria-current="page">assemble</a></li>
+    <li><a href="https://github.com/DigiAye/agent-skills/tree/main/skills/assemble"><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-github"/></svg>Source</a></li>
     <li><button class="kbd-btn" type="button" data-cmdk-open aria-label="Open command palette"><kbd>⌘</kbd><kbd>K</kbd></button></li>
   </ul>
 </nav>
@@ -189,19 +189,19 @@
       <div class="team" id="team">
         <div class="lock" aria-hidden="true"></div>
         <article class="hero-card glass builder" data-tilt="5">
-          <div class="badge"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-hammer"/></svg></div>
+          <div class="badge"><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-hammer"/></svg></div>
           <h3>The builder</h3><p>Gets it working. Fills gaps and fixes every must-fix from the last turn.</p><span class="slot">Model 1 · then rotates</span>
         </article>
         <article class="hero-card glass skeptic" data-tilt="5">
-          <div class="badge"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-shield-alert"/></svg></div>
+          <div class="badge"><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-shield-alert"/></svg></div>
           <h3>The skeptic</h3><p>Assumes it's wrong somewhere and finds where. Checks every claim against the task.</p><span class="slot">Model 2 · then rotates</span>
         </article>
         <article class="hero-card glass edge" data-tilt="5">
-          <div class="badge"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-bug"/></svg></div>
+          <div class="badge"><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-bug"/></svg></div>
           <h3>The breaker</h3><p>Empty inputs, failures, security, cost. Whatever the happy path forgot.</p><span class="slot">Model 3 · then rotates</span>
         </article>
         <article class="hero-card glass simple" data-tilt="5">
-          <div class="badge"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-scissors"/></svg></div>
+          <div class="badge"><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-scissors"/></svg></div>
           <h3>The simplifier</h3><p>Cuts what the task didn't ask for. Smaller, clearer, same result.</p><span class="slot">Model 4 · then rotates</span>
         </article>
       </div>
@@ -226,25 +226,25 @@
       </figure>
     </div>
     <div class="cta">
-      <a class="pill primary" href="#install" data-magnet><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-terminal"/></svg>Install</a>
-      <a class="pill ghost glass" href="#rounds"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-repeat"/></svg>How the rounds work</a>
+      <a class="pill primary" href="#install" data-magnet><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-terminal"/></svg>Install</a>
+      <a class="pill ghost glass" href="#rounds"><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-repeat"/></svg>How the rounds work</a>
     </div>
   </section>
 
   <section id="rounds" class="reveal" aria-labelledby="rounds-h">
-    <h2 id="rounds-h"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-repeat"/></svg>36 rounds, tightening as it goes</h2>
+    <h2 id="rounds-h"><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-repeat"/></svg>36 rounds, tightening as it goes</h2>
     <p class="muted">A round is one model's turn. A pass is all four. Each block has fewer passes, because the answer should need less each time.</p>
     <div class="funnel" id="funnel"><noscript><p>Block 1: 4 passes × 4 models = 16 rounds. Block 2: 3 × 4 = 12 (28 total). Block 3: 2 × 4 = 8 (36 total). After 36 it asks before continuing.</p></noscript></div>
   </section>
 
   <section id="rotation-s" class="reveal" aria-labelledby="rot-h">
-    <h2 id="rot-h"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-orbit"/></svg>Everyone plays every role</h2>
+    <h2 id="rot-h"><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-orbit"/></svg>Everyone plays every role</h2>
     <p class="muted">Roles rotate each pass, so no model only ever builds or only ever criticises. Each turn sees the current answer and the last critique, but never who wrote it.</p>
     <div class="rotation glass"><table id="rotation"><caption class="sr-only">Role played by each model in each pass</caption></table><noscript><p>Pass 1: builder, skeptic, breaker, simplifier. Each pass, every model moves one role along.</p></noscript></div>
   </section>
 
   <section id="converge" class="reveal" aria-labelledby="conv-h">
-    <h2 id="conv-h"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-check-check"/></svg>It knows when to stop</h2>
+    <h2 id="conv-h"><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-check-check"/></svg>It knows when to stop</h2>
     <div class="conv glass refract" id="conv">
       <svg viewBox="0 0 620 300" role="img" aria-label="Example run: must-fix issues fall from 9 to 0 by round 22, where the loop converges and stops early">
         <defs><linearGradient id="convFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#f2b134" stop-opacity=".35"/><stop offset="1" stop-color="#f2b134" stop-opacity="0"/></linearGradient></defs>
@@ -267,7 +267,7 @@
   </section>
 
   <section id="compare" class="reveal" aria-labelledby="cmp-h">
-    <h2 id="cmp-h"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-git-merge"/></svg>A Ralph Wiggum loop, with a team</h2>
+    <h2 id="cmp-h"><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-git-merge"/></svg>A Ralph Wiggum loop, with a team</h2>
     <div class="compare-wrap glass">
       <table class="compare">
         <thead><tr><th scope="col"></th><th scope="col">Plain Ralph loop</th><th scope="col">assemble</th></tr></thead>
@@ -283,7 +283,7 @@
   </section>
 
   <section id="adapters" class="reveal" aria-labelledby="ad-h">
-    <h2 id="ad-h"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-users"/></svg>Where the four come from</h2>
+    <h2 id="ad-h"><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-users"/></svg>Where the four come from</h2>
     <div class="adapters stagger">
       <div class="adapter glass" data-tilt="4" style="--accent: var(--builder)"><h3 style="color: var(--builder-t)">In-tool subagents</h3><p>If your tool can pick a model per subagent. Cursor can mix vendors; in Claude Code and Kiro you get four Claude variants.</p></div>
       <div class="adapter glass" data-tilt="4" style="--accent: var(--edge)"><h3 style="color: var(--edge-t)">Vendor CLIs</h3><p><span class="mono">claude</span>, <span class="mono">codex</span>, <span class="mono">gemini</span> and <span class="mono">agent</span>, one call per turn. The real multi-vendor team.</p></div>
@@ -293,7 +293,7 @@
   </section>
 
   <section id="install" class="reveal" aria-labelledby="install-h">
-    <h2 id="install-h"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-terminal"/></svg>Install</h2>
+    <h2 id="install-h"><svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-terminal"/></svg>Install</h2>
     <pre class="code glass">git clone https://github.com/DigiAye/agent-skills.git
 cd agent-skills &amp;&amp; ./install.sh
 
@@ -325,7 +325,7 @@ cd agent-skills &amp;&amp; ./install.sh
   </filter>
 </svg>
 
-<script src="../assets/fx.js"></script>
+<script src="/agent-skills/assets/fx.js"></script>
 <script>
   const ROLES = [
     { key: "builder", name: "Builder", icon: "hammer" },
@@ -333,7 +333,7 @@ cd agent-skills &amp;&amp; ./install.sh
     { key: "edge", name: "Breaker", icon: "bug" },
     { key: "simple", name: "Simplifier", icon: "scissors" }
   ];
-  const ICON = (n) => `<svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-${n}"/></svg>`;
+  const ICON = (n) => `<svg class="icon" aria-hidden="true"><use href="/agent-skills/assets/icons.svg#i-${n}"/></svg>`;
   const SCHEDULE = [4, 3, 2];
 
   // Rounds funnel
@@ -391,7 +391,7 @@ uniform vec2 u_res; uniform float u_time; uniform vec2 u_pointer; uniform vec2 u
 float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 float noise(vec2 p){ vec2 i = floor(p), f = fract(p); vec2 u = f * f * (3. - 2. * f);
   return mix(mix(hash(i), hash(i + vec2(1, 0)), u.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), u.x), u.y); }
-float fbm(vec2 p){ float v = 0., a = .5; for (int i = 0; i < 4; i++) { v += a * noise(p); p = p * 2.03 + vec2(1.7, 9.2); a *= .5; } return v; }
+float fbm(vec2 p){ float v = 0., a = .5; for (int i = 0; i < 3; i++) { v += a * noise(p); p = p * 2.03 + vec2(1.7, 9.2); a *= .5; } return v; }
 void main(){
   vec2 uv = gl_FragCoord.xy / u_res; float asp = u_res.x / u_res.y;
   vec2 p = uv - u_centre; p.x *= asp;
@@ -416,20 +416,20 @@ void main(){
   gl_FragColor = vec4(col * a, a);
 }`;
     const centre = (w, h) => { const r = team.getBoundingClientRect(); return [r.left + r.width / 2 - (px - .5) * 20, r.top + r.height / 2 - (py - .5) * 14]; };
-    const gl = FX.gl(canvas, FRAG, (set, w, h) => {
+    const gl = FX.gl(canvas, FRAG, (set, w, h, fade) => {
       px += (FX.pointer.x - px) * .05; py += (FX.pointer.y - py) * .05;
       const [cx, cy] = centre(w, h);
       set("u_centre", cx / w, 1 - cy / h);
-      set("u_fade", Math.max(0, 1 - scrollY / (h * 1.05)));
+      set("u_fade", fade);
     });
     if (gl) return;
     const streams = [["47,128,237", -.1, -.1], ["215,38,61", 1.1, -.1], ["242,177,52", -.1, 1.1], ["46,204,113", 1.1, 1.1]]
-      .map(([c, sx, sy], k) => ({ c, sx, sy, k, sprite: FX.sprite(c), parts: Array.from({ length: 90 }, () => ({ t: Math.random(), v: .09 + Math.random() * .16, o: (Math.random() - .5) * 2, ph: Math.random() * 6.28 })) }));
+      .map(([c, sx, sy], k) => ({ c, sx, sy, k, sprite: FX.sprite(c), parts: Array.from({ length: 36 }, () => ({ t: Math.random(), v: .09 + Math.random() * .16, o: (Math.random() - .5) * 2, ph: Math.random() * 6.28 })) }));
     const core = FX.sprite("255,236,190");
     const bez = (p0, p1, p2, p3, t) => { const u = 1 - t; return [u * u * u * p0[0] + 3 * u * u * t * p1[0] + 3 * u * t * t * p2[0] + t * t * t * p3[0], u * u * u * p0[1] + 3 * u * u * t * p1[1] + 3 * u * t * t * p2[1] + t * t * t * p3[1]]; };
     FX.canvas(canvas, (ctx, w, h, dt, t) => {
       const F = Math.max(0, 1 - scrollY / (h * 1.05));
-      ctx.clearRect(0, 0, w, h); if (F <= 0) return;
+      ctx.clearRect(0, 0, w, h); if (F <= 0) return false;
       px += (FX.pointer.x - px) * .05; py += (FX.pointer.y - py) * .05;
       const [cx, cy] = centre(w, h);
       ctx.globalCompositeOperation = "lighter"; ctx.lineCap = "round";
