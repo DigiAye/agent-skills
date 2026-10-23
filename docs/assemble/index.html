@@ -10,24 +10,30 @@
 <meta property="og:url" content="https://digiaye.github.io/agent-skills/assemble/">
 <meta property="og:image" content="https://digiaye.github.io/agent-skills/assets/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23070a12' stroke='%235ef1ff' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%23f2b134'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/glass.css">
 <style>
   :root { --bg: #0a0c14; --panel: #1e2433; --accent: #f2b134; --accent-2: #d7263d;
-    --builder: #2f80ed; --skeptic: #d7263d; --edge: #f2b134; --simple: #2ecc71; --text: #f3f4f7; --muted: #a9b1c3; }
+    --builder: #2f80ed; --skeptic: #d7263d; --edge: #f2b134; --simple: #2ecc71;
+    /* text-safe tints of the four role colours (>= 4.5:1 on the dark ground) */
+    --builder-t: #7db2ff; --skeptic-t: #ff7585; --edge-t: #f2b134; --simple-t: #4ade80;
+    --text: #f3f4f7; --muted: #a9b1c3; }
   body { background: var(--bg); color: var(--text); font: 17px/1.6 "Space Grotesk", system-ui, sans-serif; }
   .field { position: fixed; inset: 0; z-index: 0; pointer-events: none;
     background:
-      radial-gradient(800px 600px at 10% 0%, rgba(47, 128, 237, .30), transparent 60%),
-      radial-gradient(800px 600px at 95% 15%, rgba(215, 38, 61, .30), transparent 60%),
-      radial-gradient(700px 500px at 80% 100%, rgba(46, 204, 113, .16), transparent 60%),
-      radial-gradient(700px 500px at 10% 100%, rgba(242, 177, 52, .20), transparent 60%),
+      radial-gradient(800px 600px at 10% 0%, rgba(47, 128, 237, .26), transparent 60%),
+      radial-gradient(800px 600px at 95% 15%, rgba(215, 38, 61, .26), transparent 60%),
+      radial-gradient(700px 500px at 80% 100%, rgba(46, 204, 113, .14), transparent 60%),
+      radial-gradient(700px 500px at 10% 100%, rgba(242, 177, 52, .18), transparent 60%),
       linear-gradient(180deg, #0a0c14, #0d1120); }
   .steel { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .05;
     background: repeating-linear-gradient(115deg, #fff 0 1px, transparent 1px 14px); }
+  .vignette { position: fixed; inset: 0; z-index: 2; pointer-events: none; background: radial-gradient(120% 90% at 50% 40%, transparent 50%, rgba(5, 6, 12, .7)); }
   main, .site-nav { position: relative; z-index: 3; }
   .site-nav { font: 20px "Bebas Neue", sans-serif; letter-spacing: .08em; }
+  .site-nav .kbd-btn { font: 14px "Space Grotesk", sans-serif; }
   .brand { display: flex; align-items: center; gap: 10px; color: var(--accent); }
   h1, h2, h3 { font-family: "Bebas Neue", Impact, sans-serif; font-weight: 400; letter-spacing: .04em; line-height: .95; }
   h2 { font-size: clamp(40px, 6vw, 64px); margin: 0 0 22px; display: flex; gap: 14px; align-items: center; }
@@ -37,23 +43,41 @@
   .muted { color: var(--muted); }
 
   /* Hero */
-  .hero { min-height: 92vh; display: grid; align-content: center; gap: 34px; padding-top: 30px; }
-  .hero h1 { font-size: clamp(84px, 16vw, 210px); margin: 0; text-align: center;
+  .hero { min-height: calc(100svh - 90px); display: grid; align-content: center; gap: 18px; padding: 16px 0 10px; }
+  .hero h1 { font-size: clamp(60px, 9.5vw, 122px); margin: 0; text-align: center;
     background: linear-gradient(180deg, #fff 10%, #f2b134 60%, #d7263d); -webkit-background-clip: text; background-clip: text; color: transparent;
     filter: drop-shadow(0 6px 30px rgba(215, 38, 61, .35)); }
-  .hero .tag { text-align: center; font-size: clamp(19px, 2.4vw, 24px); max-width: 44ch; margin: -14px auto 0; color: var(--text); }
-  .team { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-  .hero-card { padding: 22px 20px; display: grid; gap: 10px; border-top: 3px solid var(--c); }
-  .hero-card .badge { width: 54px; height: 54px; border-radius: 16px; display: grid; place-items: center; background: color-mix(in srgb, var(--c) 22%, transparent); color: var(--c); box-shadow: 0 0 24px color-mix(in srgb, var(--c) 40%, transparent); }
-  .hero-card .badge .icon { width: 28px; height: 28px; stroke-width: 1.5; }
-  .hero-card h3 { margin: 0; font-size: 34px; color: var(--c); }
-  .hero-card p { margin: 0; color: var(--muted); font-size: 15px; }
-  .hero-card .slot { font: 12px "JetBrains Mono", monospace; color: var(--text); opacity: .8; text-transform: uppercase; letter-spacing: .12em; }
-  .builder { --c: var(--builder); } .skeptic { --c: var(--skeptic); } .edge { --c: var(--edge); } .simple { --c: var(--simple); }
-  .lock { position: absolute; inset: -14px; border-radius: 30px; border: 2px solid var(--accent); opacity: 0; pointer-events: none; }
+  .hero .tag { text-align: center; font-size: clamp(17px, 2vw, 20px); max-width: 60ch; margin: -8px auto 0; color: var(--text); }
+  .stage { display: grid; grid-template-columns: 1fr 1.08fr; gap: 18px; align-items: stretch; }
+  .team { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .hero-card { padding: 16px 16px 14px; display: grid; gap: 6px; border-top: 3px solid var(--c); --accent: var(--c);
+    /* darker plate than plain glass: the shader behind is bright, and the copy has to stay >= 4.5:1 */
+    background: linear-gradient(160deg, rgba(14, 17, 28, .78), rgba(14, 17, 28, .6)); }
+  .hero-card .badge { width: 42px; height: 42px; border-radius: 13px; display: grid; place-items: center; background: color-mix(in srgb, var(--c) 22%, transparent); color: var(--ct); box-shadow: 0 0 24px color-mix(in srgb, var(--c) 40%, transparent); }
+  .hero-card .badge .icon { width: 22px; height: 22px; stroke-width: 1.5; }
+  .hero-card h3 { margin: 0; font-size: 27px; color: var(--ct); }
+  .hero-card p { margin: 0; color: var(--muted); font-size: 13.5px; line-height: 1.45; }
+  .hero-card .slot { font: 11px "JetBrains Mono", monospace; color: var(--text); opacity: .8; text-transform: uppercase; letter-spacing: .12em; }
+  .builder { --c: var(--builder); --ct: var(--builder-t); } .skeptic { --c: var(--skeptic); --ct: var(--skeptic-t); } .edge { --c: var(--edge); --ct: var(--edge-t); } .simple { --c: var(--simple); --ct: var(--simple-t); }
+  .lock { position: absolute; inset: -12px; border-radius: 30px; border: 2px solid var(--accent); opacity: 0; pointer-events: none; }
   .cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
   .pill.primary { background: var(--accent); color: #1a1205; font-family: "Space Grotesk", sans-serif; }
   .pill.ghost { color: var(--text); }
+
+  /* Relay terminal */
+  .relay.term { font-size: 12.5px; line-height: 1.7; display: grid; align-content: start; }
+  .relay .bar span { color: var(--muted); }
+  .relay .hdr { margin: 0; color: var(--muted); white-space: pre-wrap; }
+  .relay .hdr b { color: var(--text); font-weight: 600; }
+  .relay .hdr + .prompt { margin-top: 6px; }
+  .relay .r { display: grid; grid-template-columns: 50px 30px 78px 1fr auto; gap: 8px; align-items: baseline; }
+  .relay .r .p { color: var(--muted); } .relay .r .n { color: var(--text); opacity: .7; }
+  .relay .role { font-weight: 600; }
+  .relay .b .role { color: var(--builder-t); } .relay .s .role { color: var(--skeptic-t); } .relay .e .role { color: var(--edge-t); } .relay .m .role { color: var(--simple-t); }
+  .relay .must { color: var(--text); font-weight: 600; justify-self: end; }
+  .relay .must.zero { color: var(--simple-t); }
+  .relay .promise { color: var(--simple-t); }
+  .relay .sum { color: var(--muted); }
 
   /* Rounds funnel */
   .funnel { display: grid; gap: 14px; }
@@ -71,7 +95,7 @@
   .rotation table { border-collapse: separate; border-spacing: 8px; width: 100%; min-width: 560px; }
   .rotation th { font: 400 22px "Bebas Neue", sans-serif; letter-spacing: .06em; text-align: left; color: var(--muted); }
   .rotation td { padding: 12px 14px; border-radius: 12px; background: color-mix(in srgb, var(--c) 20%, transparent); border: 1px solid color-mix(in srgb, var(--c) 50%, transparent); color: var(--text); font-weight: 500; }
-  .rotation td .icon { display: inline-block; vertical-align: -5px; margin-right: 8px; color: var(--c); }
+  .rotation td .icon { display: inline-block; vertical-align: -5px; margin-right: 8px; color: var(--ct); }
   .rotation tr.now td { box-shadow: 0 0 0 2px var(--c), 0 0 22px color-mix(in srgb, var(--c) 50%, transparent); }
 
   /* Convergence */
@@ -96,26 +120,44 @@
   .adapter p { margin: 0; color: var(--muted); font-size: 15px; }
 
   @media (max-width: 900px) {
-    .team, .adapters { grid-template-columns: repeat(2, 1fr); }
+    .hero { min-height: 0; padding-top: 30px; }
+    .stage { grid-template-columns: 1fr; }
+    .adapters { grid-template-columns: repeat(2, 1fr); }
     .conv { grid-template-columns: 1fr; }
     .block, .block:nth-child(2), .block:nth-child(3), .ask { width: 100%; grid-template-columns: 1fr; }
     .total { text-align: left; }
   }
-  @media (max-width: 520px) { .team, .adapters { grid-template-columns: 1fr; } }
+  @media (max-width: 640px) {
+    .hero h1 { font-size: clamp(56px, 17vw, 84px); }
+    .relay .r { grid-template-columns: 46px 74px 1fr auto; gap: 8px; } .relay .r .n { display: none; }
+    .relay.term { font-size: 11.5px; }
+    section { padding: 56px 0 10px; }
+    h2 { font-size: clamp(34px, 9vw, 48px); }
+  }
+  @media (max-width: 420px) { .adapters { grid-template-columns: 1fr; } .team { gap: 8px; } .hero-card { padding: 12px 12px 10px; } .hero-card h3 { font-size: 23px; } .hero-card .slot { font-size: 10px; white-space: nowrap; } }
 
   @media (prefers-reduced-motion: no-preference) {
-    .hero-card { animation: assemble 1s cubic-bezier(.2, .9, .2, 1.1) both; }
+    /* backwards fill so the tilt transform owns the cards once they have landed */
+    .hero-card { animation: assemble 1s cubic-bezier(.2, .9, .2, 1.1) backwards; }
     .hero-card.builder { --from: -60vw, -30vh; animation-delay: .2s; }
     .hero-card.skeptic { --from: 60vw, -30vh; animation-delay: .4s; }
     .hero-card.edge { --from: -60vw, 30vh; animation-delay: .6s; }
     .hero-card.simple { --from: 60vw, 30vh; animation-delay: .8s; }
-    @keyframes assemble { from { opacity: 0; transform: translate(var(--from)) rotate(-6deg) scale(.8); } to { opacity: 1; transform: none; } }
+    @keyframes assemble { from { opacity: 0; transform: translate(var(--from)) rotate(-6deg) scale(.8); } }
     .lock { animation: lock 1.2s ease-out 1.8s both; }
     @keyframes lock { 0% { opacity: 0; transform: scale(1.04); } 30% { opacity: 1; box-shadow: 0 0 60px rgba(242, 177, 52, .6); } 100% { opacity: 0; transform: scale(1); } }
-    .hero h1 { animation: rise .9s ease both; }
-    @keyframes rise { from { opacity: 0; letter-spacing: .3em; } to { opacity: 1; } }
-    .js .reveal { opacity: 0; transform: translateY(20px); transition: opacity .7s ease, transform .7s ease; }
-    .js .reveal.in { opacity: 1; transform: none; }
+    .hero h1 { animation: rise 1s cubic-bezier(.2, .8, .2, 1) both; }
+    @keyframes rise { from { opacity: 0; letter-spacing: .3em; filter: blur(12px) drop-shadow(0 6px 30px rgba(215, 38, 61, .35)); } }
+    /* Depth of field on scroll: the title sinks back and softens, the team lifts away a touch faster. */
+    @supports (animation-timeline: scroll()) {
+      .js .hero h1 { animation: rise 1s cubic-bezier(.2, .8, .2, 1) both, sink linear both; animation-timeline: auto, scroll(); animation-range: normal, 0 80vh; }
+      @keyframes sink { to { transform: translateY(-30px) scale(.9); opacity: .15; filter: blur(6px) drop-shadow(0 0 0 transparent); } }
+      .js .stage { animation: lift linear both; animation-timeline: scroll(); animation-range: 0 80vh; }
+      @keyframes lift { to { transform: translateY(-50px); opacity: .2; } }
+    }
+    .hero .tag, .hero .cta { animation: up .8s ease .5s backwards; }
+    .relay.term { animation: up .9s ease 1.1s backwards; }
+    @keyframes up { from { opacity: 0; transform: translateY(14px); } }
     .js .conv .line { stroke-dasharray: 1400; stroke-dashoffset: 1400; transition: stroke-dashoffset 2.4s ease; }
     .js .conv.in .line { stroke-dashoffset: 0; }
   }
@@ -124,6 +166,10 @@
 <body>
 <div class="field" aria-hidden="true"></div>
 <div class="steel" aria-hidden="true"></div>
+<canvas id="fx" class="fx-canvas" aria-hidden="true"></canvas>
+<div class="dim" aria-hidden="true" style="background: rgba(5,6,12,.16); z-index: 1"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
 
 <nav class="site-nav glass wrap" aria-label="Main">
   <a class="brand" href="../"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-users"/></svg>agent-skills</a>
@@ -131,6 +177,7 @@
     <li><a href="../today/">today</a></li>
     <li><a href="./" aria-current="page">assemble</a></li>
     <li><a href="https://github.com/DigiAye/agent-skills/tree/main/skills/assemble"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-github"/></svg>Source</a></li>
+    <li><button class="kbd-btn" type="button" data-cmdk-open aria-label="Open command palette"><kbd>⌘</kbd><kbd>K</kbd></button></li>
   </ul>
 </nav>
 
@@ -138,27 +185,48 @@
   <section class="hero" aria-labelledby="title">
     <h1 id="title">assemble</h1>
     <p class="tag">Four models. One answer. They take turns building it, doubting it, breaking it and trimming it, round after round, until there's nothing left to fix.</p>
-    <div class="team">
-      <div class="lock" aria-hidden="true"></div>
-      <article class="hero-card glass builder">
-        <div class="badge"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-hammer"/></svg></div>
-        <h3>The builder</h3><p>Gets it working. Fills gaps and fixes every must-fix from the last turn.</p><span class="slot">Model 1 · then rotates</span>
-      </article>
-      <article class="hero-card glass skeptic">
-        <div class="badge"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-shield-alert"/></svg></div>
-        <h3>The skeptic</h3><p>Assumes it's wrong somewhere and finds where. Checks every claim against the task.</p><span class="slot">Model 2 · then rotates</span>
-      </article>
-      <article class="hero-card glass edge">
-        <div class="badge"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-bug"/></svg></div>
-        <h3>The breaker</h3><p>Empty inputs, failures, security, cost. Whatever the happy path forgot.</p><span class="slot">Model 3 · then rotates</span>
-      </article>
-      <article class="hero-card glass simple">
-        <div class="badge"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-scissors"/></svg></div>
-        <h3>The simplifier</h3><p>Cuts what the task didn't ask for. Smaller, clearer, same result.</p><span class="slot">Model 4 · then rotates</span>
-      </article>
+    <div class="stage">
+      <div class="team" id="team">
+        <div class="lock" aria-hidden="true"></div>
+        <article class="hero-card glass builder" data-tilt="5">
+          <div class="badge"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-hammer"/></svg></div>
+          <h3>The builder</h3><p>Gets it working. Fills gaps and fixes every must-fix from the last turn.</p><span class="slot">Model 1 · then rotates</span>
+        </article>
+        <article class="hero-card glass skeptic" data-tilt="5">
+          <div class="badge"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-shield-alert"/></svg></div>
+          <h3>The skeptic</h3><p>Assumes it's wrong somewhere and finds where. Checks every claim against the task.</p><span class="slot">Model 2 · then rotates</span>
+        </article>
+        <article class="hero-card glass edge" data-tilt="5">
+          <div class="badge"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-bug"/></svg></div>
+          <h3>The breaker</h3><p>Empty inputs, failures, security, cost. Whatever the happy path forgot.</p><span class="slot">Model 3 · then rotates</span>
+        </article>
+        <article class="hero-card glass simple" data-tilt="5">
+          <div class="badge"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-scissors"/></svg></div>
+          <h3>The simplifier</h3><p>Cuts what the task didn't ask for. Smaller, clearer, same result.</p><span class="slot">Model 4 · then rotates</span>
+        </article>
+      </div>
+      <figure class="relay term glass prism" data-play data-speed="22" data-tilt="2" style="margin:0">
+        <div class="bar" aria-hidden="true"><i></i><i></i><i></i><span>adapter · vendor CLIs</span></div>
+        <p class="hdr">team      <b>claude</b> · <b>codex</b> · <b>gemini</b> · <b>agent</b></p>
+        <p class="hdr">schedule  4×4 → 3×4 → 2×4 · cap <b>36</b> rounds</p>
+        <p class="ln prompt"><span class="type">/assemble Design a rate limiter for our public API</span></p>
+        <p class="ln faint" data-d="500">task saved · pass 1 of 9 begins</p>
+        <p class="ln r b" data-d="420"><span class="p">pass 1</span><span class="n">r01</span><span class="role">builder</span><span>drafts v1, token bucket</span><span class="must">MUST 9</span></p>
+        <p class="ln r s" data-d="420"><span class="p"></span><span class="n">r02</span><span class="role">skeptic</span><span>window maths is wrong</span><span class="must">MUST 8</span></p>
+        <p class="ln r e" data-d="420"><span class="p"></span><span class="n">r03</span><span class="role">breaker</span><span>burst at window edge</span><span class="must">MUST 8</span></p>
+        <p class="ln r m" data-d="520"><span class="p"></span><span class="n">r04</span><span class="role">simplifier</span><span>drops tenant override</span><span class="must">MUST 7</span></p>
+        <p class="ln r" data-d="380"><span class="p">pass 2</span><span class="n">r05</span><span class="role sum">rotate</span><span class="sum">…</span><span class="must">6 → 5</span></p>
+        <p class="ln r" data-d="380"><span class="p">pass 3</span><span class="n">r09</span><span class="sum"></span><span class="sum">…</span><span class="must">4 → 3</span></p>
+        <p class="ln r" data-d="380"><span class="p">pass 4</span><span class="n">r13</span><span class="sum"></span><span class="sum">block 1 done, block 2 starts</span><span class="must">3 → 2</span></p>
+        <p class="ln r" data-d="520"><span class="p">pass 5</span><span class="n">r17</span><span class="sum"></span><span class="sum">…</span><span class="must">2 → 0</span></p>
+        <p class="ln r s" data-d="600"><span class="p">pass 6</span><span class="n">r21</span><span class="role">skeptic</span><span class="promise">&lt;promise&gt;CONVERGED&lt;/promise&gt;</span><span class="must zero">MUST 0</span></p>
+        <p class="ln r e" data-d="700"><span class="p"></span><span class="n">r22</span><span class="role">breaker</span><span class="promise">agrees</span><span class="must zero">MUST 0</span></p>
+        <p class="ln ok" data-d="500">✓ converged at round 22 of 36 · stopped early</p>
+        <figcaption class="sr-only">Example run: six passes, must-fix count falls from 9 to 0, the skeptic declares CONVERGED, the breaker agrees, and the loop stops at round 22 of 36.</figcaption>
+      </figure>
     </div>
     <div class="cta">
-      <a class="pill primary" href="#install"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-terminal"/></svg>Install</a>
+      <a class="pill primary" href="#install" data-magnet><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-terminal"/></svg>Install</a>
       <a class="pill ghost glass" href="#rounds"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-repeat"/></svg>How the rounds work</a>
     </div>
   </section>
@@ -166,16 +234,16 @@
   <section id="rounds" class="reveal" aria-labelledby="rounds-h">
     <h2 id="rounds-h"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-repeat"/></svg>36 rounds, tightening as it goes</h2>
     <p class="muted">A round is one model's turn. A pass is all four. Each block has fewer passes, because the answer should need less each time.</p>
-    <div class="funnel" id="funnel"></div>
+    <div class="funnel" id="funnel"><noscript><p>Block 1: 4 passes × 4 models = 16 rounds. Block 2: 3 × 4 = 12 (28 total). Block 3: 2 × 4 = 8 (36 total). After 36 it asks before continuing.</p></noscript></div>
   </section>
 
-  <section class="reveal" aria-labelledby="rot-h">
+  <section id="rotation-s" class="reveal" aria-labelledby="rot-h">
     <h2 id="rot-h"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-orbit"/></svg>Everyone plays every role</h2>
     <p class="muted">Roles rotate each pass, so no model only ever builds or only ever criticises. Each turn sees the current answer and the last critique, but never who wrote it.</p>
-    <div class="rotation glass"><table id="rotation"><caption class="sr-only">Role played by each model in each pass</caption></table></div>
+    <div class="rotation glass"><table id="rotation"><caption class="sr-only">Role played by each model in each pass</caption></table><noscript><p>Pass 1: builder, skeptic, breaker, simplifier. Each pass, every model moves one role along.</p></noscript></div>
   </section>
 
-  <section class="reveal" aria-labelledby="conv-h">
+  <section id="converge" class="reveal" aria-labelledby="conv-h">
     <h2 id="conv-h"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-check-check"/></svg>It knows when to stop</h2>
     <div class="conv glass refract" id="conv">
       <svg viewBox="0 0 620 300" role="img" aria-label="Example run: must-fix issues fall from 9 to 0 by round 22, where the loop converges and stops early">
@@ -186,7 +254,7 @@
         <circle id="convDot" r="7" fill="#2ecc71"/>
         <text x="40" y="272">1</text><text x="262" y="272">16</text><text x="437" y="272">28</text><text x="585" y="272">36</text>
         <text x="8" y="30">MUST</text>
-        <text id="convLabel" fill="#2ecc71">converged</text>
+        <text id="convLabel" fill="#4ade80">converged</text>
       </svg>
       <ul>
         <li>Every critique tags issues as <span class="mono">MUST</span> or <span class="mono">NICE</span>.</li>
@@ -198,7 +266,7 @@
     </div>
   </section>
 
-  <section class="reveal" aria-labelledby="cmp-h">
+  <section id="compare" class="reveal" aria-labelledby="cmp-h">
     <h2 id="cmp-h"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-git-merge"/></svg>A Ralph Wiggum loop, with a team</h2>
     <div class="compare-wrap glass">
       <table class="compare">
@@ -214,12 +282,12 @@
     </div>
   </section>
 
-  <section class="reveal" aria-labelledby="ad-h">
+  <section id="adapters" class="reveal" aria-labelledby="ad-h">
     <h2 id="ad-h"><svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#i-users"/></svg>Where the four come from</h2>
-    <div class="adapters">
-      <div class="adapter glass"><h3 style="color: var(--builder)">In-tool subagents</h3><p>If your tool can pick a model per subagent. Cursor can mix vendors; in Claude Code and Kiro you get four Claude variants.</p></div>
-      <div class="adapter glass"><h3 style="color: var(--edge)">Vendor CLIs</h3><p><span class="mono">claude</span>, <span class="mono">codex</span>, <span class="mono">gemini</span> and <span class="mono">agent</span>, one call per turn. The real multi-vendor team.</p></div>
-      <div class="adapter glass"><h3 style="color: var(--simple)">Solo mode</h3><p>One model plays all four roles with a fresh start each turn. Works anywhere.</p></div>
+    <div class="adapters stagger">
+      <div class="adapter glass" data-tilt="4" style="--accent: var(--builder)"><h3 style="color: var(--builder-t)">In-tool subagents</h3><p>If your tool can pick a model per subagent. Cursor can mix vendors; in Claude Code and Kiro you get four Claude variants.</p></div>
+      <div class="adapter glass" data-tilt="4" style="--accent: var(--edge)"><h3 style="color: var(--edge-t)">Vendor CLIs</h3><p><span class="mono">claude</span>, <span class="mono">codex</span>, <span class="mono">gemini</span> and <span class="mono">agent</span>, one call per turn. The real multi-vendor team.</p></div>
+      <div class="adapter glass" data-tilt="4" style="--accent: var(--simple)"><h3 style="color: var(--simple-t)">Solo mode</h3><p>One model plays all four roles with a fresh start each turn. Works anywhere.</p></div>
     </div>
     <p class="muted">The CLI mode sends your task to every vendor on the list. Set <span class="mono">allowedModels</span> or <span class="mono">localOnly</span> in the config to control that.</p>
   </section>
@@ -246,8 +314,18 @@ cd agent-skills &amp;&amp; ./install.sh
     <feTurbulence type="fractalNoise" baseFrequency="0.01 0.014" numOctaves="2" seed="11" result="noise"/>
     <feDisplacementMap in="SourceGraphic" in2="noise" scale="30" xChannelSelector="R" yChannelSelector="G"/>
   </filter>
+  <!-- prism: refraction plus a 2px chromatic split of the backdrop (Chromium backdrop-filter only) -->
+  <filter id="prism" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.006 0.01" numOctaves="2" seed="5" result="noise"/>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="16" xChannelSelector="R" yChannelSelector="G" result="d"/>
+    <feColorMatrix in="d" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="r"/><feOffset in="r" dx="2" result="r2"/>
+    <feColorMatrix in="d" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="g"/>
+    <feColorMatrix in="d" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="b"/><feOffset in="b" dx="-2" result="b2"/>
+    <feBlend in="r2" in2="g" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/>
+  </filter>
 </svg>
 
+<script src="../assets/fx.js"></script>
 <script>
   const ROLES = [
     { key: "builder", name: "Builder", icon: "hammer" },
@@ -274,7 +352,7 @@ cd agent-skills &amp;&amp; ./install.sh
   const head = `<thead><tr><th scope="col">Pass</th>${[1, 2, 3, 4].map((m) => `<th scope="col">Model ${m}</th>`).join("")}</tr></thead>`;
   const rows = [0, 1, 2, 3].map((p) => `<tr data-pass="${p}"><th scope="row">${p + 1}</th>${[0, 1, 2, 3].map((m) => {
     const r = ROLES[(m + p) % 4];
-    return `<td style="--c: var(--${r.key})">${ICON(r.icon)}${r.name}</td>`;
+    return `<td style="--c: var(--${r.key}); --ct: var(--${r.key}-t)">${ICON(r.icon)}${r.name}</td>`;
   }).join("")}</tr>`).join("");
   table.insertAdjacentHTML("beforeend", head + `<tbody>${rows}</tbody>`);
 
@@ -288,25 +366,94 @@ cd agent-skills &amp;&amp; ./install.sh
   dot.setAttribute("cx", x(end)); dot.setAttribute("cy", y(0));
   label.setAttribute("x", x(end) + 12); label.setAttribute("y", y(0) - 10);
   label.textContent = `converged at round ${end + 1}`;
-
-  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  document.documentElement.classList.add("js");
+  FX.refresh();
 
   // Highlight the current pass, cycling through
-  if (!reduced) {
+  if (!FX.reduced()) {
     let p = 0;
-    const tick = () => { table.querySelectorAll("tr[data-pass]").forEach((tr) => tr.classList.toggle("now", +tr.dataset.pass === p)); p = (p + 1) % 4; };
+    const tick = () => { if (document.hidden) return; table.querySelectorAll("tr[data-pass]").forEach((tr) => tr.classList.toggle("now", +tr.dataset.pass === p)); p = (p + 1) % 4; };
     tick(); setInterval(tick, 2200);
   }
+  // Draw the convergence line when it scrolls into view
+  const conv = document.getElementById("conv");
+  if (FX.reduced() || !("IntersectionObserver" in window)) conv.classList.add("in");
+  else { const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { conv.classList.add("in"); io.disconnect(); } }), { threshold: .3 }); io.observe(conv); }
 
-  // Scroll reveals
-  const reveal = (n) => n.classList.add("in");
-  if (reduced || !("IntersectionObserver" in window)) {
-    document.querySelectorAll(".reveal, .conv").forEach(reveal);
-  } else {
-    const io = new IntersectionObserver((entries) => entries.forEach((e) => { if (e.isIntersecting) { reveal(e.target); io.unobserve(e.target); } }), { threshold: .2 });
-    document.querySelectorAll(".reveal, .conv").forEach((n) => io.observe(n));
-  }
+  /* Background: four energy streams, one per role, pouring from the corners into the team and fusing gold-white.
+     Preferred path is a small hand-written WebGL fragment shader (domain-warped fbm streaks in polar space);
+     canvas2D particles are the fallback; the CSS gradient underneath is the static fallback for both.
+     Fades out as the hero scrolls away. */
+  (() => {
+    const team = document.getElementById("team"), canvas = document.getElementById("fx");
+    let px = .5, py = .5;
+    const FRAG = `precision mediump float;
+uniform vec2 u_res; uniform float u_time; uniform vec2 u_pointer; uniform vec2 u_centre; uniform float u_fade;
+float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+float noise(vec2 p){ vec2 i = floor(p), f = fract(p); vec2 u = f * f * (3. - 2. * f);
+  return mix(mix(hash(i), hash(i + vec2(1, 0)), u.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), u.x), u.y); }
+float fbm(vec2 p){ float v = 0., a = .5; for (int i = 0; i < 4; i++) { v += a * noise(p); p = p * 2.03 + vec2(1.7, 9.2); a *= .5; } return v; }
+void main(){
+  vec2 uv = gl_FragCoord.xy / u_res; float asp = u_res.x / u_res.y;
+  vec2 p = uv - u_centre; p.x *= asp;
+  float r = length(p), ang = atan(p.y, p.x), t = u_time;
+  /* streaks in (angle, radius) space, drifting inward, warped by a slower noise field */
+  vec2 q = vec2(ang * 3.0, r * 2.4 + t * .45);
+  float warp = fbm(q * .9 + vec2(0., t * .06));
+  float s = fbm(vec2(q.x * 2.6 + warp * 1.1, q.y * 1.1 + warp * .5));
+  s = smoothstep(.46, .88, s);
+  /* four sources at the corners: blue TL, red TR, gold BL, green BR */
+  vec2 d = p / max(r, 1e-4);
+  vec4 w = vec4(dot(d, normalize(vec2(-asp, 1.))), dot(d, normalize(vec2(asp, 1.))), dot(d, normalize(vec2(-asp, -1.))), dot(d, normalize(vec2(asp, -1.))));
+  w = pow(max(w, 0.), vec4(3.)); w /= max(dot(w, vec4(1.)), 1e-4);
+  vec3 col = w.x * vec3(.22, .52, .95) + w.y * vec3(.88, .17, .26) + w.z * vec3(.96, .70, .22) + w.w * vec3(.20, .82, .46);
+  float fuse = smoothstep(.5, .06, r);
+  col = mix(col, vec3(1., .91, .64), fuse * .9);
+  float env = smoothstep(1.45, .08, r);
+  float glow = s * env * (.8 + .4 * fuse);
+  float core = exp(-r * r * 90.) * (.9 + .12 * sin(t * 2.2));
+  float a = clamp(glow * .55 + core * .9, 0., 1.) * u_fade;
+  a *= 1. - .07 * hash(uv * u_res + fract(t) * 7.);
+  gl_FragColor = vec4(col * a, a);
+}`;
+    const centre = (w, h) => { const r = team.getBoundingClientRect(); return [r.left + r.width / 2 - (px - .5) * 20, r.top + r.height / 2 - (py - .5) * 14]; };
+    const gl = FX.gl(canvas, FRAG, (set, w, h) => {
+      px += (FX.pointer.x - px) * .05; py += (FX.pointer.y - py) * .05;
+      const [cx, cy] = centre(w, h);
+      set("u_centre", cx / w, 1 - cy / h);
+      set("u_fade", Math.max(0, 1 - scrollY / (h * 1.05)));
+    });
+    if (gl) return;
+    const streams = [["47,128,237", -.1, -.1], ["215,38,61", 1.1, -.1], ["242,177,52", -.1, 1.1], ["46,204,113", 1.1, 1.1]]
+      .map(([c, sx, sy], k) => ({ c, sx, sy, k, sprite: FX.sprite(c), parts: Array.from({ length: 90 }, () => ({ t: Math.random(), v: .09 + Math.random() * .16, o: (Math.random() - .5) * 2, ph: Math.random() * 6.28 })) }));
+    const core = FX.sprite("255,236,190");
+    const bez = (p0, p1, p2, p3, t) => { const u = 1 - t; return [u * u * u * p0[0] + 3 * u * u * t * p1[0] + 3 * u * t * t * p2[0] + t * t * t * p3[0], u * u * u * p0[1] + 3 * u * u * t * p1[1] + 3 * u * t * t * p2[1] + t * t * t * p3[1]]; };
+    FX.canvas(canvas, (ctx, w, h, dt, t) => {
+      const F = Math.max(0, 1 - scrollY / (h * 1.05));
+      ctx.clearRect(0, 0, w, h); if (F <= 0) return;
+      px += (FX.pointer.x - px) * .05; py += (FX.pointer.y - py) * .05;
+      const [cx, cy] = centre(w, h);
+      ctx.globalCompositeOperation = "lighter"; ctx.lineCap = "round";
+      for (const s of streams) {
+        const p0 = [s.sx * w, s.sy * h], p3 = [cx, cy];
+        const wob = Math.sin(t * .5 + s.k * 1.7) * 90, wob2 = Math.cos(t * .37 + s.k) * 60;
+        const p1 = [p0[0] + (p3[0] - p0[0]) * .25 + wob, p0[1] + (p3[1] - p0[1]) * .55 - wob2];
+        const p2 = [p3[0] + (p0[0] - p3[0]) * .35 - wob2, p3[1] + (p0[1] - p3[1]) * .1 + wob];
+        ctx.strokeStyle = `rgba(${s.c},${.10 * F})`; ctx.lineWidth = 60; ctx.beginPath(); ctx.moveTo(p0[0], p0[1]); ctx.bezierCurveTo(p1[0], p1[1], p2[0], p2[1], p3[0], p3[1]); ctx.stroke();
+        ctx.strokeStyle = `rgba(${s.c},${.38 * F})`; ctx.lineWidth = 1.5; ctx.stroke();
+        for (const p of s.parts) {
+          p.t += p.v * dt; if (p.t > 1) { p.t -= 1; p.o = (Math.random() - .5) * 2; }
+          const [x, y] = bez(p0, p1, p2, p3, p.t), spread = (1 - p.t) * 30 * p.o + Math.sin(t * 2 + p.ph) * 4;
+          const sz = 9 + 14 * p.t, fuse = p.t * p.t * p.t;
+          ctx.globalAlpha = (.35 + .6 * p.t) * F * (1 - fuse * .6); ctx.drawImage(s.sprite, x + spread - sz / 2, y + spread * .6 - sz / 2, sz, sz);
+          if (fuse > .2) { ctx.globalAlpha = fuse * .8 * F; ctx.drawImage(core, x + spread - sz / 2, y + spread * .6 - sz / 2, sz, sz); }
+        }
+      }
+      const pulse = 1 + .08 * Math.sin(t * 2.2), R = Math.min(w, h) * .3 * pulse;
+      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, R); g.addColorStop(0, `rgba(255,236,190,${.34 * F})`); g.addColorStop(.3, `rgba(242,177,52,${.14 * F})`); g.addColorStop(1, "rgba(242,177,52,0)");
+      ctx.globalAlpha = 1; ctx.fillStyle = g; ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
+      ctx.globalCompositeOperation = "source-over";
+    });
+  })();
 </script>
 </body>
 </html>

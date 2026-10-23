@@ -1,9 +1,22 @@
 /* Shared liquid-glass layer for the agent-skills pages.
-   Each page sets --accent, --accent-2, --bg and --panel. */
+   Each page sets --accent, --accent-2, --bg and --panel.
+   Pointer-reactive bits read --mx/--my/--glow/--rx/--ry, which fx.js writes. */
 
 *, *::before, *::after { box-sizing: border-box; }
+/* Cross-document view transitions (Chromium 126+, Safari 18.2+): the nav and brand persist, the rest cross-fades. */
+@view-transition { navigation: auto; }
+.site-nav { view-transition-name: site-nav; }
+.site-nav .brand { view-transition-name: brand; }
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) { animation: 220ms ease both vt-out; }
+  ::view-transition-new(root) { animation: 320ms ease both vt-in; }
+  @keyframes vt-out { to { opacity: 0; transform: scale(.985); filter: blur(6px); } }
+  @keyframes vt-in { from { opacity: 0; transform: scale(1.015); filter: blur(6px); } }
+}
+@media (prefers-reduced-motion: reduce) { ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; } }
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+html { overflow-x: clip; }
 body { margin: 0; min-height: 100vh; overflow-x: hidden; }
 img, svg { display: block; max-width: 100%; }
 a { color: inherit; }
@@ -25,17 +38,38 @@ a { color: inherit; }
     inset 0 -1px 0 rgba(0, 0, 0, .25),
     0 18px 50px rgba(0, 0, 0, .40);
 }
-/* Specular highlight along the top-left rim. */
+/* Specular highlight along the top-left rim, plus a soft pointer-following fill. */
 .glass::before {
   content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
-  background: radial-gradient(120% 60% at 0% 0%, rgba(255, 255, 255, .18), transparent 40%);
+  background:
+    radial-gradient(280px circle at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--accent) calc(var(--glow, 0) * 22%), transparent), transparent 70%),
+    radial-gradient(120% 60% at 0% 0%, rgba(255, 255, 255, .18), transparent 40%);
   mix-blend-mode: screen;
 }
+/* Pointer-reactive rim light: the same gradient masked down to the 1px border. */
+.glass::after {
+  content: ""; position: absolute; inset: -1px; border-radius: inherit; pointer-events: none;
+  padding: 1.5px; opacity: var(--glow, 0); transition: opacity .15s linear;
+  background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), #fff 0%, color-mix(in srgb, var(--accent) 90%, white) 18%, color-mix(in srgb, var(--accent) 60%, transparent) 40%, transparent 68%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+.glass > * { position: relative; }
 
 /* Refraction is Chromium-only, and Safari drops the whole declaration if url() is mixed in,
    so it lives in its own @supports block and is limited to a few static panels. */
 @supports (backdrop-filter: url("#liquid")) {
   .glass.refract { backdrop-filter: url("#liquid") blur(10px) saturate(170%); }
+  .glass.prism { backdrop-filter: url("#prism") blur(8px) saturate(170%); }
+}
+/* Hero glass: chromatic fringe on the vertical edges plus a brighter specular rim, everywhere. */
+.glass.prism {
+  box-shadow:
+    inset 1.5px 0 0 rgba(255, 110, 120, .22), inset -1.5px 0 0 rgba(110, 170, 255, .22),
+    inset 0 1px 0 rgba(255, 255, 255, .38), inset 0 -1px 0 rgba(0, 0, 0, .3),
+    0 24px 70px rgba(0, 0, 0, .5), 0 0 0 1px rgba(255, 255, 255, .04);
 }
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
@@ -46,11 +80,73 @@ a { color: inherit; }
 }
 @media (prefers-contrast: more) {
   .glass { background: var(--panel); border-color: var(--accent); box-shadow: none; }
-  .glass::before { display: none; }
+  .glass::before, .glass::after { display: none; }
 }
 
 /* Dims busy backgrounds behind glass so text keeps its contrast. */
 .dim { position: fixed; inset: 0; background: rgba(0, 0, 0, .35); pointer-events: none; z-index: 0; }
+
+/* Depth stack: static gradient (z0) < canvas (z1) < grain (z2) < content (z3). */
+.fx-canvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; opacity: 0; transition: opacity 1.4s ease; }
+.fx-canvas.on { opacity: 1; }
+.grain {
+  position: fixed; inset: -50%; width: 200%; height: 200%; z-index: 2; pointer-events: none; opacity: .09; mix-blend-mode: overlay;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0 / 240px 240px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .js .grain { animation: grain 1.4s steps(7) infinite; }
+  @keyframes grain {
+    0% { transform: translate(0, 0); } 15% { transform: translate(-2%, 1%); } 30% { transform: translate(1%, -2%); }
+    45% { transform: translate(-1%, 2%); } 60% { transform: translate(2%, 1%); } 75% { transform: translate(-2%, -1%); } 100% { transform: translate(1%, 2%); }
+  }
+}
+
+/* 3D tilt: fx.js writes --rx/--ry while the pointer is inside. --lift is for hover rises. */
+[data-tilt] {
+  transform: perspective(1100px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(var(--lift, 0px));
+  transition: transform .4s cubic-bezier(.2, .8, .2, 1);
+  transform-style: preserve-3d;
+}
+/* Magnetic pull for focal buttons. */
+[data-magnet] { transform: translate(var(--tx, 0px), var(--ty, 0px)); transition: transform .18s ease-out; }
+
+/* Scroll reveals. Content is visible without JS; with JS, CSS scroll-driven animation where
+   supported, IntersectionObserver (.io-reveal) elsewhere. */
+@media (prefers-reduced-motion: no-preference) {
+  .io-reveal .reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s cubic-bezier(.2, .8, .2, 1), transform .8s cubic-bezier(.2, .8, .2, 1); }
+  .io-reveal .reveal.in { opacity: 1; transform: none; }
+  @supports (animation-timeline: view()) {
+    .js:not(.io-reveal) .reveal { animation: reveal linear both; animation-timeline: view(); animation-range: entry 0% entry 45%; }
+  }
+  @keyframes reveal { from { opacity: 0; transform: translateY(40px) scale(.985); } to { opacity: 1; transform: none; } }
+  /* Staggered children: each child enters a little later than the previous one. */
+  .io-reveal .reveal .stagger > * { opacity: 0; transform: translateY(18px); transition: opacity .7s cubic-bezier(.2, .8, .2, 1), transform .7s cubic-bezier(.2, .8, .2, 1); }
+  .io-reveal .reveal.in .stagger > * { opacity: 1; transform: none; }
+  .io-reveal .reveal.in .stagger > :nth-child(2) { transition-delay: .08s; } .io-reveal .reveal.in .stagger > :nth-child(3) { transition-delay: .16s; }
+  .io-reveal .reveal.in .stagger > :nth-child(4) { transition-delay: .24s; } .io-reveal .reveal.in .stagger > :nth-child(5) { transition-delay: .32s; } .io-reveal .reveal.in .stagger > :nth-child(n+6) { transition-delay: .4s; }
+  @supports (animation-timeline: view()) {
+    .js:not(.io-reveal) .stagger > * { animation: reveal linear both; animation-timeline: view(); animation-range: entry 0% entry 50%; }
+    .js:not(.io-reveal) .stagger > :nth-child(2) { animation-range: entry 8% entry 58%; } .js:not(.io-reveal) .stagger > :nth-child(3) { animation-range: entry 16% entry 66%; }
+    .js:not(.io-reveal) .stagger > :nth-child(4) { animation-range: entry 24% entry 74%; } .js:not(.io-reveal) .stagger > :nth-child(n+5) { animation-range: entry 32% entry 82%; }
+  }
+}
+
+/* Section-level ambient light so the lower page keeps depth once the hero canvas has faded.
+   Alternates side and hue; with scroll-driven animations it brightens as the section passes through the viewport. */
+main > section { position: relative; }
+main > section::before {
+  content: ""; position: absolute; z-index: -1; pointer-events: none; inset: -12% -8%;
+  background: radial-gradient(55% 55% at var(--gx, 18%) 40%, color-mix(in srgb, var(--accent) 13%, transparent), transparent 70%);
+  opacity: .9;
+}
+main > section:nth-of-type(even)::before { --gx: 82%; background: radial-gradient(55% 55% at var(--gx) 50%, color-mix(in srgb, var(--accent-2) 12%, transparent), transparent 70%); }
+main > section:first-of-type::before { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .js main > section::before { animation: ambient linear both; animation-timeline: view(); animation-range: entry 0% exit 100%; }
+    @keyframes ambient { 0% { opacity: 0; transform: translateY(60px) scale(.9); } 45%, 55% { opacity: 1; transform: none; } 100% { opacity: .1; transform: translateY(-60px) scale(.95); } }
+  }
+}
 
 .icon { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.25; stroke-linecap: round; stroke-linejoin: round; flex: none; }
 
@@ -65,11 +161,56 @@ pre.code {
   background: rgba(0, 0, 0, .45); border: 1px solid rgba(255, 255, 255, .08);
 }
 
+/* Terminal playback. Every line is in the markup; fx.js only reveals them in order. */
+.term { font: 13.5px/1.75 "JetBrains Mono", ui-monospace, Menlo, monospace; padding: 14px 18px 16px; border-radius: 18px; background: rgba(0, 0, 0, .58); border: 1px solid rgba(255, 255, 255, .09); text-align: left; overflow: hidden; }
+.term .bar { display: flex; gap: 6px; align-items: center; margin-bottom: 10px; color: rgba(255, 255, 255, .45); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+.term .bar i { width: 9px; height: 9px; border-radius: 50%; background: rgba(255, 255, 255, .16); }
+.term .bar i:first-child { background: #ff5f57; } .term .bar i:nth-child(2) { background: #febc2e; } .term .bar i:nth-child(3) { background: #28c840; }
+.term .bar span { margin-left: auto; }
+.term .ln { margin: 0; white-space: pre-wrap; word-break: break-word; }
+.term .prompt { color: #fff; }
+.term .prompt::before { content: "$ "; color: var(--accent); }
+.term .faint { opacity: .62; }
+.term .ok { color: #4ade80; }
+.js .term.play .ln { opacity: 0; }
+.js .term.play .ln.on { opacity: 1; }
+@media (prefers-reduced-motion: no-preference) {
+  .js .term.play .ln.on { animation: ln-in .32s ease; }
+  @keyframes ln-in { from { opacity: 0; transform: translateY(5px); } }
+  .term.play .prompt .type::after { content: ""; display: inline-block; width: .6em; height: 1.05em; margin-left: 2px; vertical-align: text-bottom; background: currentColor; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+}
+
 .site-nav { position: sticky; top: 14px; z-index: 10; margin-top: 14px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .site-nav a { text-decoration: none; }
-.site-nav ul { display: flex; gap: 6px; list-style: none; margin: 0; padding: 0; flex-wrap: wrap; }
+.site-nav ul { display: flex; gap: 6px; list-style: none; margin: 0; padding: 0; flex-wrap: wrap; align-items: center; }
 .site-nav li a { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 999px; }
 .site-nav li a:hover, .site-nav li a[aria-current="page"] { background: rgba(255, 255, 255, .08); }
 
-.site-footer { position: relative; z-index: 1; padding: 40px 0 60px; font-size: 13px; opacity: .75; }
+kbd { font: 12px/1 "JetBrains Mono", ui-monospace, monospace; padding: 4px 6px; border-radius: 6px; background: rgba(255, 255, 255, .10); border: 1px solid rgba(255, 255, 255, .14); box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .4); }
+.kbd-btn { display: inline-flex; gap: 4px; align-items: center; margin-left: 6px; padding: 5px 8px; border-radius: 999px; background: transparent; border: 1px solid rgba(255, 255, 255, .14); color: inherit; cursor: pointer; font: inherit; }
+.kbd-btn:hover { background: rgba(255, 255, 255, .08); }
+@media (max-width: 480px) { .kbd-btn { display: none; } }
+@media (max-width: 640px) {
+  .wrap { width: min(1160px, 100% - 24px); }
+  .site-nav { top: 8px; margin-top: 8px; padding: 8px 10px; flex-wrap: wrap; }
+  .site-nav .brand { white-space: nowrap; }
+  .site-nav li a { padding: 7px 9px; font-size: 14px; }
+  .term { font-size: 12px; padding: 12px 12px 14px; }
+}
+
+/* Command palette, built by fx.js when the page loads. */
+.cmdk { border: 0; padding: 0; background: transparent; color: inherit; width: min(600px, 92vw); margin: 12vh auto 0; }
+.cmdk::backdrop { background: rgba(0, 0, 0, .55); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.cmdk .box { overflow: hidden; border-radius: 20px; background: color-mix(in srgb, var(--panel) 80%, black); }
+.cmdk input { width: 100%; padding: 18px 20px; font: 17px Inter, system-ui, sans-serif; color: inherit; background: transparent; border: 0; border-bottom: 1px solid rgba(255, 255, 255, .10); outline: none; }
+.cmdk input::placeholder { color: rgba(255, 255, 255, .45); }
+.cmdk ul { list-style: none; margin: 0; padding: 8px; max-height: 52vh; overflow: auto; }
+.cmdk li { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 11px 14px; border-radius: 12px; cursor: pointer; font-size: 15px; }
+.cmdk li[aria-selected="true"], .cmdk li:hover { background: rgba(255, 255, 255, .09); }
+.cmdk li span { font: 12px "JetBrains Mono", ui-monospace, monospace; letter-spacing: .08em; text-transform: uppercase; opacity: .6; }
+.cmdk .empty { padding: 20px; text-align: center; opacity: .6; }
+.cmdk .hint { display: flex; gap: 14px; padding: 10px 18px; font-size: 12px; opacity: .6; border-top: 1px solid rgba(255, 255, 255, .08); }
+
+.site-footer { position: relative; z-index: 3; padding: 40px 0 60px; font-size: 13px; opacity: .78; }
 .site-footer p { margin: 4px 0; }

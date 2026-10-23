@@ -10,66 +10,178 @@
 <meta property="og:url" content="https://digiaye.github.io/agent-skills/">
 <meta property="og:image" content="https://digiaye.github.io/agent-skills/assets/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23070a12' stroke='%235ef1ff' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%23f2b134'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono&family=Rajdhani:wght@600&family=Bebas+Neue&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/glass.css">
 <style>
-  :root { --bg: #070a12; --panel: #121826; --accent: #5ef1ff; --accent-2: #f2b134; }
-  body { background: var(--bg); color: #eef2f7; font: 16px/1.55 Inter, system-ui, sans-serif; }
+  :root { --bg: #070a12; --panel: #121826; --accent: #5ef1ff; --accent-2: #f2b134; --red: #ff5a6e; --text: #eef2f7; --muted: #c9d3e0; }
+  body { background: var(--bg); color: var(--text); font: 16px/1.55 Inter, system-ui, sans-serif; }
   .bg { position: fixed; inset: 0; z-index: 0; pointer-events: none;
     background:
-      radial-gradient(700px 500px at 20% 20%, rgba(25, 211, 240, .28), transparent 60%),
-      radial-gradient(700px 500px at 85% 70%, rgba(215, 38, 61, .26), transparent 60%),
-      radial-gradient(500px 400px at 60% 10%, rgba(242, 177, 52, .18), transparent 60%); }
-  main { position: relative; z-index: 1; }
-  .hero { padding: 90px 0 40px; }
-  h1 { font: 600 clamp(40px, 7vw, 76px)/1 Rajdhani, sans-serif; letter-spacing: .04em; margin: 0 0 16px; }
-  .lede { font-size: 20px; max-width: 62ch; color: #c9d3e0; margin: 0; }
-  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 22px; padding: 20px 0 40px; }
-  .card { padding: 30px; text-decoration: none; display: grid; gap: 14px; transition: transform .25s ease; }
-  @media (prefers-reduced-motion: no-preference) { .card:hover { transform: translateY(-4px); } }
-  .card h2 { margin: 0; font-size: 34px; display: flex; align-items: center; gap: 12px; }
-  .card.today h2 { font-family: Rajdhani, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: #5ef1ff; }
-  .card.assemble h2 { font-family: "Bebas Neue", sans-serif; letter-spacing: .06em; color: #f2b134; font-size: 42px; }
-  .card p { margin: 0; color: #c9d3e0; }
-  .card .go { font-weight: 600; display: inline-flex; gap: 8px; align-items: center; }
-  .works { display: flex; flex-wrap: wrap; gap: 10px; list-style: none; padding: 0; margin: 10px 0 0; }
-  .works li { padding: 6px 12px; border-radius: 999px; background: rgba(255, 255, 255, .07); font: 13px "JetBrains Mono", monospace; }
-  section h2.h { font: 600 28px Rajdhani, sans-serif; letter-spacing: .06em; }
+      radial-gradient(700px 500px at 20% 20%, rgba(25, 211, 240, .22), transparent 60%),
+      radial-gradient(700px 500px at 85% 70%, rgba(215, 38, 61, .20), transparent 60%),
+      radial-gradient(500px 400px at 60% 10%, rgba(242, 177, 52, .14), transparent 60%); }
+  .gridlines { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .5;
+    background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size: 72px 72px; -webkit-mask-image: radial-gradient(60% 60% at 50% 30%, #000, transparent); mask-image: radial-gradient(60% 60% at 50% 30%, #000, transparent); }
+  main, .site-nav { position: relative; z-index: 3; }
+  .site-nav { font-weight: 600; font-size: 15px; }
+  .brand { display: flex; align-items: center; gap: 10px; color: var(--accent); font: 600 18px Rajdhani, sans-serif; letter-spacing: .1em; text-transform: uppercase; }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+
+  /* Hero */
+  .hero { padding: 110px 0 44px; display: grid; gap: 18px; justify-items: start; }
+  .eyebrow { display: inline-flex; gap: 10px; align-items: center; font: 12px/1 "JetBrains Mono", monospace; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); padding: 8px 14px; border-radius: 999px; }
+  .eyebrow i { width: 7px; height: 7px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 10px #4ade80; }
+  h1 { font: 600 clamp(56px, 10vw, 132px)/.92 Rajdhani, sans-serif; letter-spacing: .02em; margin: 0;
+    background: linear-gradient(100deg, #fff 0%, var(--accent) 35%, #fff 50%, var(--accent-2) 70%, #fff 100%); background-size: 240% 100%;
+    -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .lede { font-size: clamp(18px, 2vw, 22px); max-width: 58ch; color: var(--muted); margin: 0; }
+  .cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+  .pill.primary { background: var(--accent); color: #031018; }
+  .pill.ghost { color: var(--text); }
+
+  /* Bento */
+  .bento { display: grid; grid-template-columns: repeat(6, 1fr); grid-auto-rows: minmax(120px, auto); gap: 16px; padding: 30px 0 20px; }
+  .cell { padding: 28px; text-decoration: none; display: grid; gap: 14px; align-content: start; }
+  .cell.today, .cell.assemble { grid-column: span 3; grid-row: span 2; }
+  .cell.install { grid-column: span 4; }
+  .cell.portable { grid-column: span 2; }
+  .cell h2 { margin: 0; font-size: 34px; display: flex; align-items: center; gap: 12px; }
+  .cell.today h2 { font-family: Rajdhani, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+  .cell.assemble h2 { font-family: "Bebas Neue", sans-serif; letter-spacing: .06em; color: var(--accent-2); font-size: 42px; font-weight: 400; }
+  .cell p { margin: 0; color: var(--muted); }
+  .cell .go { font-weight: 600; display: inline-flex; gap: 8px; align-items: center; margin-top: auto; }
+  .cell.today .go { color: var(--accent); } .cell.assemble .go { color: var(--accent-2); }
+  .cell h3 { margin: 0; font: 600 13px "JetBrains Mono", monospace; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+  a.cell:hover { --lift: -4px; }
+
+  /* today mini HUD */
+  .hud { position: relative; overflow: hidden; border-radius: 14px; border: 1px solid rgba(94, 241, 255, .18); background: rgba(3, 10, 20, .6); padding: 12px; display: grid; gap: 8px; font-size: 14px; }
+  .hud .row { display: grid; grid-template-columns: 40px 1fr; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 10px; background: rgba(94, 241, 255, .05); }
+  .hud .row b { font: 700 22px Rajdhani, sans-serif; color: var(--accent); text-align: center; }
+  .hud .row small { display: block; color: var(--muted); font: 11.5px "JetBrains Mono", monospace; margin-top: 2px; }
+  .hud .sweep { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, transparent 0%, rgba(94, 241, 255, .14) 50%, transparent 100%); height: 60%; top: -60%; }
+  .today.cell { --accent: #5ef1ff; }
+  .assemble.cell { --accent: #f2b134; }
+
+  /* assemble relay strip */
+  .relay { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .relay div { position: relative; height: 56px; border-radius: 12px; background: color-mix(in srgb, var(--c) 18%, transparent); border: 1px solid color-mix(in srgb, var(--c) 45%, transparent); display: grid; place-items: center; color: var(--c); font: 12px "JetBrains Mono", monospace; letter-spacing: .1em; text-transform: uppercase; overflow: hidden; }
+  .relay div::after { content: ""; position: absolute; inset: 0; background: color-mix(in srgb, var(--c) 45%, transparent); opacity: 0; }
+  .relay .b { --c: #6aa6ff; } .relay .s { --c: #ff6b7a; } .relay .e { --c: #f2b134; } .relay .m { --c: #4ade80; }
+  .spark { width: 100%; height: 70px; overflow: visible; }
+  .converge { display: flex; justify-content: space-between; align-items: center; font: 12px "JetBrains Mono", monospace; color: var(--muted); letter-spacing: .08em; }
+  .converge b { color: #4ade80; font-weight: 600; }
+
+  .list { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+  .list li { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(255, 255, 255, .08); font-size: 14px; }
+  .list li span:last-child { color: var(--muted); font: 12px "JetBrains Mono", monospace; }
+
+  @media (max-width: 900px) {
+    .cell.today, .cell.assemble, .cell.install, .cell.portable { grid-column: span 6; grid-row: auto; }
+  }
+  @media (max-width: 640px) {
+    .hero { padding: 70px 0 30px; }
+    .eyebrow { font-size: 11px; letter-spacing: .1em; }
+    .cell { padding: 20px; }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .js h1 { animation: shimmer 9s linear infinite, rise 1s cubic-bezier(.2, .8, .2, 1) both; }
+    @keyframes shimmer { to { background-position: -240% 0; } }
+    @keyframes rise { from { opacity: 0; letter-spacing: .18em; filter: blur(8px); } }
+    .js .hero > :not(h1) { animation: up .8s cubic-bezier(.2, .8, .2, 1) both; }
+    .js .hero > :nth-child(1) { animation-delay: .05s; } .js .hero > :nth-child(3) { animation-delay: .25s; } .js .hero > :nth-child(4) { animation-delay: .4s; }
+    @keyframes up { from { opacity: 0; transform: translateY(14px); } }
+    .js .bento > .cell { animation: up .9s cubic-bezier(.2, .8, .2, 1) backwards; }
+    .js .bento > .cell:nth-child(2) { animation-delay: .12s; } .js .bento > .cell:nth-child(3) { animation-delay: .24s; } .js .bento > .cell:nth-child(4) { animation-delay: .32s; }
+    .hud .sweep { animation: sweep 4.5s ease-in-out infinite; }
+    @keyframes sweep { 0% { top: -60%; } 60%, 100% { top: 110%; } }
+    .relay div::after { animation: pass 4.8s steps(1) infinite; }
+    .relay .s::after { animation-delay: 1.2s; } .relay .e::after { animation-delay: 2.4s; } .relay .m::after { animation-delay: 3.6s; }
+    @keyframes pass { 0% { opacity: .55; } 25%, 100% { opacity: 0; } }
+    .eyebrow i { animation: pulse 2.2s ease-in-out infinite; }
+    @keyframes pulse { 50% { opacity: .35; } }
+  }
 </style>
 </head>
 <body>
 <div class="bg" aria-hidden="true"></div>
+<canvas id="fx" class="fx-canvas" aria-hidden="true"></canvas>
+<div class="gridlines" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<nav class="site-nav glass wrap" aria-label="Main">
+  <a class="brand" href="./" aria-current="page"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#i-orbit"/></svg>agent-skills</a>
+  <ul>
+    <li><a href="today/">today</a></li>
+    <li><a href="assemble/">assemble</a></li>
+    <li><a href="https://github.com/DigiAye/agent-skills"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#i-github"/></svg>Source</a></li>
+    <li><button class="kbd-btn" type="button" data-cmdk-open aria-label="Open command palette"><kbd>⌘</kbd><kbd>K</kbd></button></li>
+  </ul>
+</nav>
+
 <main class="wrap">
-  <section class="hero">
-    <h1>agent-skills</h1>
+  <section class="hero" aria-labelledby="title">
+    <span class="eyebrow glass"><i aria-hidden="true"></i>Two skills · open Agent Skills standard</span>
+    <h1 id="title">agent-skills</h1>
     <p class="lede">Two skills from my AI-first workflow, written to the open <a href="https://agentskills.io">Agent Skills</a> standard so they run in Claude Code, Cursor, Kiro, Codex and Gemini CLI.</p>
-    <ul class="works" aria-label="Works with">
-      <li>Claude Code</li><li>Cursor</li><li>Kiro</li><li>Codex</li><li>Gemini CLI</li>
-    </ul>
+    <div class="cta">
+      <a class="pill primary" href="#install" data-magnet><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#i-terminal"/></svg>Install</a>
+      <a class="pill ghost glass" href="https://github.com/DigiAye/agent-skills"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#i-github"/></svg>Source on GitHub</a>
+    </div>
   </section>
 
-  <div class="cards">
-    <a class="card glass refract today" href="today/">
+  <div class="bento">
+    <a class="cell glass refract today" href="today/" data-tilt="3" data-cmdk="Open today">
       <h2><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#i-radar"/></svg>today</h2>
       <p>One ranked focus list from Teams, Outlook, GitHub and Jira, kept current through the day, with a holographic HUD.</p>
+      <div class="hud" aria-hidden="true">
+        <div class="row"><b>80</b><span>Checkout fails for saved cards on iOS<small>+40 incident · +25 due today</small></span></div>
+        <div class="row"><b>50</b><span>Review PR #482 for Priya<small>+30 blocked on you · 2 days</small></span></div>
+        <div class="row"><b>50</b><span>Own the incident write-up<small>+30 direct ask · +15 VIP</small></span></div>
+        <div class="sweep"></div>
+      </div>
       <span class="go">Open the HUD page →</span>
     </a>
-    <a class="card glass refract assemble" href="assemble/">
+    <a class="cell glass refract assemble" href="assemble/" data-tilt="3" data-cmdk="Open assemble">
       <h2><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#i-users"/></svg>assemble</h2>
       <p>Four models, one answer. They take turns building, doubting, breaking and simplifying it, for up to 36 rounds.</p>
+      <div class="relay" aria-hidden="true"><div class="b">build</div><div class="s">doubt</div><div class="e">break</div><div class="m">trim</div></div>
+      <svg class="spark" viewBox="0 0 300 70" aria-hidden="true" preserveAspectRatio="none">
+        <defs><linearGradient id="sp" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#f2b134" stop-opacity=".35"/><stop offset="1" stop-color="#f2b134" stop-opacity="0"/></linearGradient></defs>
+        <path fill="url(#sp)" d="M0,4 L14,12 28,12 42,20 56,28 70,28 84,36 98,36 112,44 126,44 140,44 154,52 168,52 182,58 196,58 210,58 224,58 238,63 252,63 266,66 280,66 294,66 L294,70 0,70 Z"/>
+        <path class="spark-line" fill="none" stroke="#f2b134" stroke-width="2" stroke-linejoin="round" d="M0,4 L14,12 28,12 42,20 56,28 70,28 84,36 98,36 112,44 126,44 140,44 154,52 168,52 182,58 196,58 210,58 224,58 238,63 252,63 266,66 280,66 294,66"/>
+        <circle cx="294" cy="66" r="4" fill="#4ade80"/>
+      </svg>
+      <div class="converge" aria-hidden="true"><span>MUST 9 → 0 · 36 rounds max</span><span>stops at <b>CONVERGED</b></span></div>
       <span class="go">Meet the team →</span>
     </a>
+
+    <section class="cell glass install" id="install" aria-labelledby="install-h">
+      <h3 id="install-h">Install</h3>
+      <figure class="term" data-play style="margin:0">
+        <div class="bar" aria-hidden="true"><i></i><i></i><i></i><span>zsh</span></div>
+        <p class="ln prompt"><span class="type">git clone https://github.com/DigiAye/agent-skills.git</span></p>
+        <p class="ln prompt" data-d="700">cd agent-skills &amp;&amp; ./install.sh</p>
+        <p class="ln faint" data-d="500"># or</p>
+        <p class="ln prompt" data-d="900">npx skills add DigiAye/agent-skills</p>
+        <p class="ln faint" data-d="400"># then, in Claude Code, Cursor or Kiro</p>
+        <p class="ln ok" data-d="600">/today morning</p>
+        <p class="ln ok" data-d="600">/assemble Design a rate limiter for our public API</p>
+        <figcaption class="sr-only">Install by cloning the repo and running install.sh, or with npx skills add DigiAye/agent-skills.</figcaption>
+      </figure>
+    </section>
+    <section class="cell glass portable" aria-labelledby="works-h">
+      <h3 id="works-h">Works with</h3>
+      <ul class="list" aria-label="Works with">
+        <li>Claude Code<span>native</span></li><li>Cursor<span>native</span></li><li>Kiro<span>native</span></li><li>Codex<span>cli</span></li><li>Gemini CLI<span>cli</span></li>
+      </ul>
+      <p style="font-size:13px">One <span class="mono">SKILL.md</span> per skill, plus adapters. No lock-in.</p>
+    </section>
   </div>
-
-  <section>
-    <h2 class="h">Install</h2>
-    <pre class="code">git clone https://github.com/DigiAye/agent-skills.git
-cd agent-skills &amp;&amp; ./install.sh
-
-# or
-npx skills add DigiAye/agent-skills</pre>
-  </section>
 </main>
 <footer class="site-footer wrap">
   <p>By <a href="https://www.digiaye.scot">Joe Morrison · DigiAye</a> · <a href="https://github.com/DigiAye/agent-skills">Source on GitHub</a> · MIT licence</p>
@@ -81,5 +193,37 @@ npx skills add DigiAye/agent-skills</pre>
     <feDisplacementMap in="SourceGraphic" in2="noise" scale="28" xChannelSelector="R" yChannelSelector="G"/>
   </filter>
 </svg>
+<script src="assets/fx.js"></script>
+<script>
+  /* Hub background: a slow particle field with depth parallax under three drifting aurora blobs. */
+  (() => {
+    const S = [FX.sprite("94,241,255"), FX.sprite("242,177,52"), FX.sprite("255,90,110")];
+    const N = 150; let pts = [], W = 0, H = 0, px = .5, py = .5;
+    const seed = (w, h) => { pts = Array.from({ length: N }, () => ({ x: Math.random() * w, y: Math.random() * h, z: .2 + Math.random() ** 2 * .8, c: Math.random() < .62 ? 0 : Math.random() < .6 ? 1 : 2, s: Math.random() * 6.28 })); };
+    const blobs = [[.2, .3, "25,211,240", 520, .13, .11], [.82, .66, "215,38,61", 560, .09, .12], [.56, .12, "242,177,52", 420, .07, .1]];
+    FX.canvas(document.getElementById("fx"), (ctx, w, h, dt, t) => {
+      if (w !== W || h !== H) { W = w; H = h; seed(w, h); }
+      px += (FX.pointer.x - px) * .04; py += (FX.pointer.y - py) * .04;
+      ctx.clearRect(0, 0, w, h);
+      ctx.globalCompositeOperation = "lighter";
+      for (const [bx, by, c, r, f1, f2] of blobs) {
+        const x = (bx + .08 * Math.sin(t * f1)) * w - (px - .5) * 50, y = (by + .06 * Math.cos(t * f2)) * h - (py - .5) * 36;
+        const g = ctx.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, `rgba(${c},.15)`); g.addColorStop(1, `rgba(${c},0)`);
+        ctx.fillStyle = g; ctx.fillRect(x - r, y - r, r * 2, r * 2);
+      }
+      const ox = (px - .5) * -90, oy = (py - .5) * -60;
+      ctx.strokeStyle = "rgba(94,241,255,.09)"; ctx.lineWidth = 1; ctx.beginPath();
+      for (let i = 0; i < N; i++) {
+        const a = pts[i]; a.y -= (5 + 16 * a.z) * dt; a.x += Math.sin(t * .4 + a.s) * 5 * dt;
+        if (a.y < -20) { a.y = h + 20; a.x = Math.random() * w; }
+        if (a.z < .55) continue;
+        for (let j = i + 1; j < N; j++) { const b = pts[j]; if (b.z < .55) continue; const dx = a.x - b.x, dy = a.y - b.y; if (dx * dx + dy * dy < 110 * 110) { ctx.moveTo(a.x + ox * a.z, a.y + oy * a.z); ctx.lineTo(b.x + ox * b.z, b.y + oy * b.z); } }
+      }
+      ctx.stroke();
+      for (const p of pts) { const sz = 4 + p.z * 16; ctx.globalAlpha = .3 + .7 * p.z; ctx.drawImage(S[p.c], p.x + ox * p.z - sz / 2, p.y + oy * p.z - sz / 2, sz, sz); }
+      ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over";
+    });
+  })();
+</script>
 </body>
 </html>
