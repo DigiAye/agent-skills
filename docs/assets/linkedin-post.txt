@@ -1,0 +1,25 @@
+A few weeks into an AI-first role and I’ve stopped treating Claude as a chat window.
+
+I’ve packaged two parts of my daily workflow as portable Agent Skills (they run in Claude Code, Cursor and Kiro):
+
+1) today
+Pulls Teams, Outlook, GitHub and Jira into one ranked focus list, and keeps a local HUD updated through the day.
+Commands: morning · refresh · wrap · explain · doctor
+
+Fixed scoring rules (not vibes): someone blocked on me, incidents, due dates, VIP senders. And it treats email/chat as data — never as instructions.
+
+2) assemble
+A multi-model review loop. Four models take turns as builder, skeptic, breaker and simplifier — up to 36 rounds — until the must-fix list is empty.
+
+Same prompt, progress in files (Ralph Wiggum style), but with a team checking each other’s work so blind spots don’t stick.
+
+Open source, MIT, no employer data in the samples:
+https://github.com/DigiAye/agent-skills
+
+Pages:
+https://digiaye.github.io/agent-skills/today/
+https://digiaye.github.io/agent-skills/assemble/
+
+If you’re building an AI-first workflow, what’s actually earning its keep in yours?
+
+#AI #DeveloperProductivity #Claude #Cursor #AgentSkills #SoftwareEngineering
