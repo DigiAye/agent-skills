@@ -193,11 +193,17 @@ pre.code {
   @keyframes blink { 50% { opacity: 0; } }
 }
 
-.site-nav { position: sticky; top: 14px; z-index: 10; margin-top: 14px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.site-nav a { text-decoration: none; }
+.site-nav {
+  position: sticky; top: 14px; z-index: 50; margin-top: 14px; padding: 10px 14px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  /* Isolation so page rules can't drop this under hero art. */
+  isolation: isolate;
+}
+.site-nav a { text-decoration: none; cursor: pointer; }
 .site-nav ul { display: flex; gap: 6px; list-style: none; margin: 0; padding: 0; flex-wrap: wrap; align-items: center; }
-.site-nav li a { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 999px; }
+.site-nav li a { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 999px; cursor: pointer; }
 .site-nav li a:hover, .site-nav li a[aria-current="page"] { background: rgba(255, 255, 255, .08); }
+.site-nav .kbd-btn { cursor: pointer; }
 
 kbd { font: 12px/1 "JetBrains Mono", ui-monospace, monospace; padding: 4px 6px; border-radius: 6px; background: rgba(255, 255, 255, .10); border: 1px solid rgba(255, 255, 255, .14); box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .4); }
 .kbd-btn { display: inline-flex; gap: 4px; align-items: center; margin-left: 6px; padding: 5px 8px; border-radius: 999px; background: transparent; border: 1px solid rgba(255, 255, 255, .14); color: inherit; cursor: pointer; font: inherit; }
