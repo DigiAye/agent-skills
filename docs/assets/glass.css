@@ -3,14 +3,14 @@
    Pointer-reactive bits read --mx/--my/--glow/--rx/--ry, which fx.js writes. */
 
 *, *::before, *::after { box-sizing: border-box; }
-/* Cross-document view transitions (Chromium 126+, Safari 18.2+): the nav and brand persist, the rest cross-fades. */
-@view-transition { navigation: auto; }
+/* View transitions are opted in from fx.js on non-Chromium browsers only.
+   Chromium pays a heavy snapshot cost with fixed canvases underneath. */
 .site-nav { view-transition-name: site-nav; }
 .site-nav .brand { view-transition-name: brand; }
+.chrome .site-nav, .chrome .site-nav .brand { view-transition-name: none; }
 @media (prefers-reduced-motion: no-preference) {
   ::view-transition-old(root) { animation: 220ms ease both vt-out; }
   ::view-transition-new(root) { animation: 320ms ease both vt-in; }
-  /* No filter:blur here — it forces a full-page paint during navigation. */
   @keyframes vt-out { to { opacity: 0; transform: scale(.985); } }
   @keyframes vt-in { from { opacity: 0; transform: scale(1.015); } }
 }
@@ -27,8 +27,7 @@ a { color: inherit; }
 .wrap { width: min(1160px, 100% - 40px); margin-inline: auto; }
 
 /* Base glass: works everywhere backdrop-filter does.
-   contain + content-visibility keep offscreen panels cheap; blur is capped at 8px
-   because cost scales roughly with radius². */
+   contain keeps offscreen panels cheap; blur is capped because cost scales with radius². */
 .glass {
   position: relative;
   contain: layout style paint;
@@ -62,17 +61,33 @@ a { color: inherit; }
 }
 .glass > * { position: relative; }
 
-/* Refraction is Chromium-only, and Safari drops the whole declaration if url() is mixed in,
-   so it lives in its own @supports block and is limited to a few static panels. */
-@supports (backdrop-filter: url("#liquid")) {
-  /* SVG backdrop filters are expensive; only on a couple of hero panels, and off once scrolled. */
-  .glass.refract { backdrop-filter: url("#liquid") blur(6px) saturate(160%); }
-  .glass.prism { backdrop-filter: url("#prism") blur(6px) saturate(160%); }
-  .fx-lite .glass.refract, .fx-lite .glass.prism,
-  .scrolled .glass.refract, .scrolled .glass.prism {
-    backdrop-filter: blur(8px) saturate(150%);
-  }
+/* Chromium: backdrop-filter on many panels + SVG url() filters + mix-blend-mode is the
+   main reason these pages feel sluggish vs Safari. Use solid plates; keep borders/rims. */
+.chrome .glass {
+  background: color-mix(in srgb, var(--panel) 88%, transparent);
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
 }
+.chrome .glass::before {
+  mix-blend-mode: normal;
+  background: radial-gradient(120% 60% at 0% 0%, rgba(255, 255, 255, .14), transparent 42%);
+}
+.chrome .glass::after { display: none; }
+.chrome .site-nav.glass {
+  /* One real blur is fine; the sticky nav is small. */
+  background: color-mix(in srgb, var(--panel) 72%, transparent);
+  -webkit-backdrop-filter: blur(10px) saturate(140%) !important;
+  backdrop-filter: blur(10px) saturate(140%) !important;
+}
+.chrome .grain { display: none; }
+.chrome .scan { display: none; }
+.chrome [data-tilt] {
+  /* Perspective tilt is fine in Safari; in Chrome it promotes extra layers over the canvas. */
+  transform: none !important;
+}
+
+/* SVG url() backdrop filters: Chromium-only and extremely expensive. Disabled entirely.
+   Chromatic fringe on .prism stays via box-shadow below. */
 /* Hero glass: chromatic fringe on the vertical edges plus a brighter specular rim, everywhere. */
 .glass.prism {
   box-shadow:

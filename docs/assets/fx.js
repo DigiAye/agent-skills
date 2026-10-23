@@ -4,18 +4,31 @@
 (() => {
   const doc = document, root = doc.documentElement;
   root.classList.add("js");
+  /* Chrome's backdrop-filter + SVG url() filters are far more expensive than Safari's.
+     Tag the document so CSS can use solid glass plates and JS can skip spotlight work.
+     iOS Chrome uses WKWebView (Safari compositor) so it stays on the Safari path. */
+  const isChromium = !!(window.chrome || /Edg\//.test(navigator.userAgent)) && !/iPhone|iPad|iPod/.test(navigator.userAgent);
+  if (isChromium) root.classList.add("chrome");
   const mq = matchMedia("(prefers-reduced-motion: reduce)");
   const reduced = () => mq.matches;
   const fine = matchMedia("(hover: hover) and (pointer: fine)").matches;
-  const FX = (window.FX = { reduced, pointer: { x: .5, y: .5 } });
-  const FPS = 30, FRAME_MS = 1000 / FPS;
+  const FX = (window.FX = { reduced, pointer: { x: .5, y: .5 }, chrome: isChromium });
+  /* Opt Safari (and others) into cross-document view transitions; skip Chromium. */
+  if (!isChromium && !reduced() && "CSS" in window) {
+    const s = doc.createElement("style");
+    s.textContent = "@view-transition { navigation: auto; }";
+    doc.head.append(s);
+  }
+  /* 20fps on Chromium (canvas still looks smooth for soft glows); 30 elsewhere. */
+  const FPS = isChromium ? 20 : 30, FRAME_MS = 1000 / FPS;
 
   /* ---- Pointer: spotlight rims on .glass, tilt on [data-tilt]. Rects are cached and
-         only refreshed on scroll/resize so pointermove never forces layout. ---- */
+         only refreshed on scroll/resize so pointermove never forces layout.
+         On Chromium we skip per-panel CSS var writes (they invalidate backdrop layers). ---- */
   let panels = [], tilts = [], raf = 0, cx = innerWidth / 2, cy = innerHeight / 2, idle = 0;
   const collect = () => {
-    panels = [...doc.querySelectorAll(".glass")].map((el) => ({ el, r: null, mx: "", my: "", g: "" }));
-    tilts = [...doc.querySelectorAll("[data-tilt]")].map((el) => ({ el, r: null, max: +el.dataset.tilt || 4, rx: "", ry: "" }));
+    panels = isChromium ? [] : [...doc.querySelectorAll(".glass")].map((el) => ({ el, r: null, mx: "", my: "", g: "" }));
+    tilts = isChromium ? [] : [...doc.querySelectorAll("[data-tilt]")].map((el) => ({ el, r: null, max: +el.dataset.tilt || 4, rx: "", ry: "" }));
     measure();
   };
   const measure = () => {
@@ -100,7 +113,7 @@
 
   /* ---- Canvas loop: 30fps, DPR=1, pauses when hidden/offscreen/idle-faded.
          draw may return false to park the loop until the next scroll/pointer. ---- */
-  FX.canvas = (canvas, draw, cap = 1) => {
+  FX.canvas = (canvas, draw, cap = isChromium ? .85 : 1) => {
     const ctx = canvas && canvas.getContext && canvas.getContext("2d", { alpha: true, desynchronized: true });
     if (!ctx || reduced()) return null;
     let w = 0, h = 0, id = 0, seen = true, last = 0, parked = false;
@@ -151,7 +164,7 @@
     const loc = gl.getAttribLocation(prog, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
     gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     const U = {}; const u = (n) => U[n] || (U[n] = gl.getUniformLocation(prog, n));
-    let w = 0, h = 0, id = 0, seen = true, t0 = 0, last = 0, parked = false, scale = .6;
+    let w = 0, h = 0, id = 0, seen = true, t0 = 0, last = 0, parked = false, scale = isChromium ? .45 : .6;
     const size = () => {
       const r = Math.min(devicePixelRatio || 1, cap) * scale;
       w = canvas.clientWidth; h = canvas.clientHeight;
